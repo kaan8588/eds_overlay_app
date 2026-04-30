@@ -1,0 +1,198 @@
+[
+  {
+    "index": 66,
+    "description": "18091 / 223. Cad. KÜÇÜKÇEKMECE  Küçükçekmece-Tem istikametine",
+    "old": 120,
+    "new": 90,
+    "reason": "223. Cad TEM bağlantı = 90"
+  },
+  {
+    "index": 67,
+    "description": "18072 / 222. Cad. KÜÇÜKÇEKMECE  Küçükçekmece-Tem istikametine",
+    "old": 120,
+    "new": 90,
+    "reason": "222. Cad TEM bağlantı = 90"
+  },
+  {
+    "index": 72,
+    "description": "21054 / Büyükdere Cad. ŞİŞLİ  Orman müdürlüğü-Tem istikametine",
+    "old": 120,
+    "new": 90,
+    "reason": "Büyükdere Cad TEM bağlantı = 90"
+  },
+  {
+    "index": 142,
+    "description": "12426 / Turgut Özal Millet Cad. FATİH  Fındıkzade-Aksaray istikametine",
+    "old": 50,
+    "new": 70,
+    "reason": "Turgut Özal Millet Cad = 70"
+  },
+  {
+    "index": 148,
+    "description": "40410 / Eski Edirne Asfaltı SULTANGAZİ  Sultangazi-Tem istikametine",
+    "old": 120,
+    "new": 90,
+    "reason": "Eski Edirne Asfaltı TEM yakını = 90 (bağlantı yolu)"
+  },
+  {
+    "index": 152,
+    "description": "70003 / Hal Yolu Kuzey Yol Otagar Mevkii ESENLER  Esenler-Otogar istikametine",
+    "old": 70,
+    "new": 90,
+    "reason": "Hal Otogar Bağlantı = 90 (UKOME)"
+  },
+  {
+    "index": 265,
+    "description": "50029 / Uzunçayır Altunizade OHTS Giriş",
+    "old": 50,
+    "new": 90,
+    "reason": "Söğütlüçeşme-Uzunçayır = 90 (UKOME)"
+  },
+  {
+    "index": 266,
+    "description": "50030 / Uzunçayır Altunizade OHTS Çıkış",
+    "old": 50,
+    "new": 90,
+    "reason": "Söğütlüçeşme-Uzunçayır = 90 (UKOME)"
+  },
+  {
+    "index": 315,
+    "description": "50097 / Halit Ulukurt Tüneli Elmalı OHTS Giriş",
+    "old": 70,
+    "new": 90,
+    "reason": "Tüneller = 90 (UKOME)"
+  },
+  {
+    "index": 316,
+    "description": "50098 /Halit Ulukurt Tüneli Elmalı OHTS Çıkış",
+    "old": 70,
+    "new": 90,
+    "reason": "Tüneller = 90 (UKOME)"
+  },
+  {
+    "index": 317,
+    "description": "50099 / Elmalı Halit Ulukurt Tüneli OHTS Giriş",
+    "old": 70,
+    "new": 90,
+    "reason": "Tüneller = 90 (UKOME)"
+  },
+  {
+    "index": 318,
+    "description": "50100 / Elmalı Halit Ulukurt Tüneli OHTS Çıkış",
+    "old": 70,
+    "new": 90,
+    "reason": "Tüneller = 90 (UKOME)"
+  },
+  {
+    "index": 330,
+    "description": "60012 / D-100 Güney Yanyol AVCILAR  Avcılar-Küçükçekmece istikametine",
+    "old": 50,
+    "new": 90,
+    "reason": "D-100 Karayolu = 90 (UKOME)"
+  },
+  {
+    "index": 344,
+    "description": "60026 / Turgut Özal Millet Cad. FATİH  Fatih-Aksaray istikametine",
+    "old": 50,
+    "new": 70,
+    "reason": "Turgut Özal Millet Cad = 70"
+  },
+  {
+    "index": 345,
+    "description": "60027 / Turgut Özal Millet Cad. FATİH  Fatih-Aksaray istikametine",
+    "old": 50,
+    "new": 70,
+    "reason": "Turgut Özal Millet Cad = 70"
+  },
+  {
+    "index": 346,
+    "description": "60028 / Turgut Özal Millet Cad. FATİH  Fatih-Aksaray istikametine",
+    "old": 50,
+    "new": 70,
+    "reason": "Turgut Özal Millet Cad = 70"
+  },
+  {
+    "index": 347,
+    "description": "60029 / Turgut Özal Millet Cad. FATİH  Fatih-Aksaray istikametine",
+    "old": 50,
+    "new": 70,
+    "reason": "Turgut Özal Millet Cad = 70"
+  },
+  {
+    "index": 348,
+    "description": "60030 / Turgut Özal Millet Cad. FATİH  Fatih-Aksaray istikametine",
+    "old": 50,
+    "new": 70,
+    "reason": "Turgut Özal Millet Cad = 70"
+  },
+  {
+    "index": 349,
+    "description": "60031 / Turgut Özal Millet Cad. FATİH  Fatih-Zeytinburnu istikametine",
+    "old": 50,
+    "new": 70,
+    "reason": "Turgut Özal Millet Cad = 70"
+  },
+  {
+    "index": 350,
+    "description": "60032 / Turgut Özal Millet Cad. FATİH  Fatih-Zeytinburnu istikametine",
+    "old": 50,
+    "new": 70,
+    "reason": "Turgut Özal Millet Cad = 70"
+  },
+  {
+    "index": 351,
+    "description": "60033 / Turgut Özal Millet Cad. FATİH  Fatih-Zeytinburnu istikametine",
+    "old": 50,
+    "new": 70,
+    "reason": "Turgut Özal Millet Cad = 70"
+  },
+  {
+    "index": 352,
+    "description": "60034 / Atatürk Bulvarı FATİH  Fatih-Beyoğlu istikametine",
+    "old": 70,
+    "new": 50,
+    "reason": "Atatürk Bulvarı Fatih = 50"
+  },
+  {
+    "index": 353,
+    "description": "60035 / Atatürk Bulvarı FATİH  Beyoğlu-Fatih istikametine",
+    "old": 70,
+    "new": 50,
+    "reason": "Atatürk Bulvarı Fatih = 50"
+  },
+  {
+    "index": 357,
+    "description": "60040 / Turgut Özal Millet Cad. FATİH  Fatih-Aksaray istikametine",
+    "old": 50,
+    "new": 70,
+    "reason": "Turgut Özal Millet Cad = 70"
+  },
+  {
+    "index": 362,
+    "description": "60045 / Çobançeşme D100 Yanyol BAKIRKÖY  Şirinevler-Bakırköy istikametine",
+    "old": 50,
+    "new": 90,
+    "reason": "D-100 Karayolu = 90 (UKOME)"
+  },
+  {
+    "index": 442,
+    "description": "76002 / D100 Otoyolu Kuzey İstikameti Ataköy Kavşağı BAHÇELİEVLER  Bahçelievler-Şirinevler istikametine",
+    "old": 120,
+    "new": 90,
+    "reason": "D-100 Karayolu = 90 (UKOME)"
+  },
+  {
+    "index": 446,
+    "description": "76006 / TEM O-2 Otoyolu Yanyol Kuzey İstikameti BAĞCILAR  Tem Bağcılar-Mahmutbey Gişeler yönüne",
+    "old": 90,
+    "new": 120,
+    "reason": "O-x Otoyolu = 120"
+  },
+  {
+    "index": 447,
+    "description": "76007 / TEM O-2 Otoyolu Kuzey İstikameti BAĞCILAR  Tem Bağcılar-Mahmutbey Gişeler yönüne",
+    "old": 90,
+    "new": 120,
+    "reason": "O-x Otoyolu = 120"
+  }
+]

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 1. Dış Parlama (Subtle Green Outer Glow) -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="26dp" />
+            <gradient
+                android:startColor="#004CAF50"
+                android:centerColor="#0D4CAF50"
+                android:endColor="#004CAF50"
+                android:angle="0"
+                android:type="linear" />
+        </shape>
+    </item>
+
+    <!-- 2. Ana Cam Gövde (Glass Body) -->
+    <item android:left="1dp" android:right="1dp" android:top="1dp" android:bottom="1dp">
+        <shape android:shape="rectangle">
+            <!-- Yarı saydam buzlu cam efekti -->
+            <solid android:color="#12FFFFFF" />
+            <corners android:radius="24dp" />
+            <stroke
+                android:width="1.2dp"
+                android:color="#2AFFFFFF" />
+        </shape>
+    </item>
+
+    <!-- 3. Yansıtıcı Materyal Efekti (Reflective Diagonal Highlight) -->
+    <item android:left="1dp" android:right="1dp" android:top="1dp" android:bottom="1dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="24dp" />
+            <gradient
+                android:angle="135"
+                android:startColor="#1AFFFFFF"
+                android:centerColor="#00FFFFFF"
+                android:endColor="#05FFFFFF"
+                android:type="linear" />
+        </shape>
+    </item>
+
+    <!-- 4. Alt Kısımdaki Hafif Yeşil Işıklar (Soft Green Bottom Light) -->
+    <item android:top="40dp" android:bottom="1dp" android:left="10dp" android:right="10dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="24dp" />
+            <gradient
+                android:angle="90"
+                android:startColor="#104CAF50"
+                android:endColor="#004CAF50"
+                android:type="linear" />
+        </shape>
+    </item>
+
+</layer-list>

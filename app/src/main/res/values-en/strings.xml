@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Muavin</string>
+    <string name="app_subtitle">Your Smart Co-pilot</string>
+    <string name="status">Drive Tracking</string>
+    <string name="status_active">MUAVIN IS OPEN</string>
+    <string name="status_inactive">MUAVIN IS CLOSED</string>
+    <string name="start_service">OPEN MUAVIN</string>
+    <string name="stop_service">CLOSE MUAVIN</string>
+    <string name="import_data">Update Data</string>
+    <string name="points_loading">Checking radar data…</string>
+    <string name="points_count">%d active radar points loaded</string>
+    <string name="info_text">Muavin works in the background to warn you about radars.\nYou focus on the road, it handles the rest.</string>
+    <string name="alert_icon_desc">Alert Icon</string>
+    <string name="overlay_permission_needed">Display over other apps permission is required. Grant permission to Muavin in settings.</string>
+    <string name="location_permission_needed">Location permission is required for Muavin to see radars.</string>
+    <string name="import_success">%d new radar points learned</string>
+    <string name="import_failed">Failed to update data</string>
+    <string name="language_switch">TR</string>
+    <string name="theme_switch">Light Mode</string>
+    <string name="theme_dark">Dark Mode</string>
+    <string name="theme_light">Light Mode</string>
+    <string name="main_quote_default">Ready to hit the road?</string>
+
+    <string-array name="muavin_quotes">
+        <item>Fines hurt, Muavin saves lives.</item>
+        <item>Take it easy champion, your destination isn\'t running away.</item>
+        <item>Eyes on the road, not the gas. I\'m here.</item>
+        <item>I see the radar before it sees you.</item>
+        <item>Watch the needle if you love your wallet!</item>
+        <item>Fast gets there early, slow gets there safely.</item>
+        <item>Traffic fine? Not my style.</item>
+        <item>The roads are yours, the caution is my job.</item>
+        <item>Maybe rein in those horses under the hood a bit.</item>
+        <item>Radars lie in wait, Muavin spoils the game.</item>
+        <item>Is your seatbelt on? Check it!</item>
+        <item>Don\'t speed, think of those waiting for you.</item>
+        <item>Don\'t let the road end with a ticket.</item>
+        <item>Be careful all the time, not just when you see a radar.</item>
+        <item>The passion for speed is nice, but fines are sad.</item>
+    </string-array>
+
+    <!-- Onboarding & Permissions -->
+    <string name="onboarding_title">Hi, I\'m Muavin!</string>
+    <string name="onboarding_msg">I track radars along the way and protect you from fines.</string>
+    <string name="onboarding_next">Continue</string>
+    <string name="permission_promise_title">A Small Permission</string>
+    <string name="permission_promise_msg">I need permissions to see the radars around you. Muavin does not share your data with third parties.</string>
+    <string name="permission_grant">Got it, Allow</string>
+    <string name="permission_denied_msg">Some permissions were denied. Muavin needs all permissions to work correctly.</string>
+    <string name="permission_retry">Try Again</string>
+    <string name="importing">Updating…</string>
+
+    <!-- Overlay Strings -->
+    <string name="overlay_status_danger">SPEEDING!</string>
+    <string name="overlay_status_warning">CAUTION</string>
+    <string name="overlay_status_safe">Safe</string>
+    <string name="overlay_status_idle">Clear</string>
+    <string name="overlay_label_limit">Limit: </string>
+    <string name="overlay_label_distance">Dist: </string>
+    <string name="tts_alert_danger">Attention! You are exceeding the speed limit. The limit is %d kilometers.</string>
+    <string name="notification_title">EDS Surveillance Active</string>
+    <string name="notification_text">Speed cameras are being monitored</string>
+</resources>

@@ -1,0 +1,6 @@
+{
+    "java.import.gradle.wrapper.enabled": true,
+    "java.import.gradle.version": "",
+    "java.import.gradle.home": "",
+    "java.configuration.updateBuildConfiguration": "automatic"
+}

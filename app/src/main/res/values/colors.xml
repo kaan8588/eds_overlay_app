@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="safe_green">#FF1B5E20</color>
+    <color name="warning_yellow">#FFF57F17</color>
+    <color name="danger_red">#FFB71C1C</color>
+    <color name="card_bg">#FF1E1E1E</color>
+    <color name="surface">#FF121212</color>
+    <color name="on_surface">#FFFFFFFF</color>
+    <color name="on_surface_dim">#80FFFFFF</color>
+</resources>

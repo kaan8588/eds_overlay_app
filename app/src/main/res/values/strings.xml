@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Muavin</string>
+    <string name="app_subtitle">Akıllı Yol Arkadaşın</string>
+    <string name="status">Sürüş Takibi</string>
+    <string name="status_active">MUAVİN AÇIK</string>
+    <string name="status_inactive">MUAVİN KAPALI</string>
+    <string name="start_service">MUAVİNİ AÇ</string>
+    <string name="stop_service">MUAVİNİ KAPAT</string>
+    <string name="import_data">Verileri Güncelle</string>
+    <string name="points_loading">Radar verileri kontrol ediliyor…</string>
+    <string name="points_count">%d aktif radar noktası yüklü</string>
+    <string name="info_text">Muavin arka planda çalışarak sizi radarlara karşı uyarır.\nSiz yola odaklanın, o gerisini halleder.</string>
+    <string name="alert_icon_desc">Uyarı ikonu</string>
+    <string name="overlay_permission_needed">Üstte görüntüleme izni gerekli. Ayarlardan Muavin\'e izin verin.</string>
+    <string name="location_permission_needed">Muavin\'in radarları görebilmesi için konum izni gerekli.</string>
+    <string name="import_success">%d yeni radar noktası öğrenildi</string>
+    <string name="import_failed">Veriler güncellenemedi</string>
+    <string name="language_switch">EN</string>
+    <string name="theme_switch">Aydınlık Mod</string>
+    <string name="theme_dark">Karanlık Mod</string>
+    <string name="theme_light">Aydınlık Mod</string>
+    <string name="main_quote_default">Yola çıkmaya hazır mısın?</string>
+
+    <string-array name="muavin_quotes">
+        <item>Cezalar can yakar, Muavin kurtarır.</item>
+        <item>Gideceğin yer kaçmıyor, sakin ol şampiyon.</item>
+        <item>Gaza değil, yola bak. Ben buradayım.</item>
+        <item>Radar seni görmeden, ben radarı görürüm.</item>
+        <item>Cüzdanını seviyorsan ibreye dikkat!</item>
+        <item>Hızlı giden acele gider, yavaş giden güvenle gider.</item>
+        <item>Trafik cezası mı? Hiç tarzım değil.</item>
+        <item>Yollar senin, dikkat benim işim.</item>
+        <item>Altındaki beygirleri biraz dizginle istersen.</item>
+        <item>Radarlar pusu kurar, Muavin oyun bozar.</item>
+        <item>Emniyet kemerin takılı mı? Kontrol et!</item>
+        <item>Hız yapma, seni bekleyenleri düşün.</item>
+        <item>Yolun sonu ceza makbuzu olmasın.</item>
+        <item>Radarı görünce değil, her zaman dikkatli ol.</item>
+        <item>Hız tutkusu güzel ama cezalar üzücü.</item>
+    </string-array>
+
+    <!-- Onboarding & Permissions -->
+    <string name="onboarding_title">Merhaba, Ben Muavin!</string>
+    <string name="onboarding_msg">Yol boyunca radarları takip eder, seni cezalardan korurum.</string>
+    <string name="onboarding_next">Devam</string>
+    <string name="permission_promise_title">Küçük Bir İzin</string>
+    <string name="permission_promise_msg">Etrafınızdaki radarları görmek için izinlere ihtiyacım var. Muavin verilerinizi üçüncü kişilerle paylaşmaz.</string>
+    <string name="permission_grant">Anladım, İzin Ver</string>
+    <string name="permission_denied_msg">Bazı izinler verilmedi. Muavin\'in düzgün çalışması için tüm izinlere ihtiyacı var.</string>
+    <string name="permission_retry">Tekrar Dene</string>
+    <string name="importing">Güncelleniyor…</string>
+
+    <!-- Overlay Strings -->
+    <string name="overlay_status_danger">HIZ AŞIMI!</string>
+    <string name="overlay_status_warning">DİKKAT</string>
+    <string name="overlay_status_safe">Güvenli</string>
+    <string name="overlay_status_idle">Temiz</string>
+    <string name="overlay_label_limit">Limit: </string>
+    <string name="overlay_label_distance">Mesafe: </string>
+    <string name="tts_alert_danger">Dikkat! Hız sınırını aşıyorsunuz. Limit %d kilometre.</string>
+    <string name="notification_title">EDS Gözetim Aktif</string>
+    <string name="notification_text">Hız kameraları izleniyor</string>
+</resources>

@@ -1,1 +1,65 @@
-Muavin: Arka Plan Konum İzleme ve Navigasyon Katman SistemiMuavin, Android işletim sistemi üzerinde çalışan, navigasyon süreçlerinde sürücü farkındalığını artırmak ve hız limitlerine uyumu teşvik etmek amacıyla geliştirilmiş bir yardımcı sistemdir. Uygulama, Google Maps ve benzeri harita servislerinin üzerinde çalışan bir System Alert Window (Overlay) mimarisi üzerine inşa edilmiştir.Teknik Mimari ve Uygulama DetaylarıProje, düşük gecikmeli veri işleme ve optimize edilmiş batarya tüketimi prensipleriyle tasarlanmıştır.1. Konum Servisleri ve Spatial AnalizSistem, yüksek hassasiyetli konum takibi için Google Play Services bünyesindeki FusedLocationProviderClient API'sini kullanır. Konum verileri, PRIORITY_HIGH_ACCURACY parametresi ile işlenerek metrelik hassasiyetle denetim noktalarına olan mesafe hesaplanır.Mesafe hesaplamalarında, Dünya'nın eğriliğini hesaba katan Haversine Formülü kullanılmaktadır:$$d = 2r \arcsin\left(\sqrt{\sin^2\left(\frac{\phi_2 - \phi_1}{2}\right) + \cos(\phi_1) \cos(\phi_2) \sin^2\left(\frac{\lambda_2 - \lambda_1}{2}\right)}\right)$$2. Vektörel Filtreleme (Bearing Logic)Yalnızca yakınlık tabanlı uyarıların neden olduğu hatalı pozitif (false positive) durumlarını engellemek için Bearing (Yönelim) doğrulaması uygulanır. Sistem, kullanıcının mevcut rotası ile radarın aktif olduğu yön arasındaki açısal farkı analiz ederek sadece ilgili şeritteki uyarıları tetikler.Veri Politikası ve Kullanım AmacıVeri Açıklaması: Bu yazılım, algoritma doğrulaması ve sistem testleri amacıyla dahili (hardcoded) olarak 1572 adet koordinat verisi içermektedir.Eğitim Amacı: Bu veri seti, İstanbul Teknik Üniversitesi (İTÜ) bünyesindeki bir Bilgisayar Mühendisliği öğrencisi tarafından, büyük veri setlerinin (big data) mobil cihazlarda mekansal olarak işlenmesi ve gerçek zamanlı tetikleme algoritmalarının test edilmesi amacıyla projeye dahil edilmiştir.Güvenlik Odaklılık: Projenin temel felsefesi, sürücüleri hız limitlerine uymaya teşvik ederek trafik güvenliğini artırmak ve kaza risklerini minimize etmektir. Verilerin varlığı, cezai yaptırımlardan kaçınmaktan ziyade, güvenli sürüş bilinci oluşturmaya yönelik bir önleyici uyarı sistemi prototipidir.Sorumluluk Reddi: Yazılımın kullanımı sırasında meydana gelebilecek trafik kuralı ihlalleri veya yasal yaptırımlar tamamen kullanıcının sorumluluğundadır. Geliştirici, verilerin güncelliği konusunda herhangi bir taahhüt vermez.İletişim ve Hak TalepleriUygulama içerisinde yer alan koordinat verilerinin kullanımıyla ilgili herhangi bir güvenlik protokolü ihlali veya veri kaldırma talebi için doğrudan geliştirici ile iletişime geçilmelidir:E-posta: isli23@itu.edu.tr
+# EDS Overlay (Muavin): Akıllı Trafik Denetleme ve Güvenlik Uyarı Sistemi
+
+Bu proje, **İstanbul Teknik Üniversitesi Bilgisayar Mühendisliği** bölümü öğrencisi **Tufan Kaan İsli** tarafından eğitim ve akademik araştırma amaçlı geliştirilmiş bir mobil platform çözümüdür. Uygulama, Elektronik Denetleme Sistemleri (EDS) verilerini kullanarak sürücü güvenliğini artırmayı ve trafik bilincini geliştirmeyi hedeflemektedir.
+
+## Akademik Bağlam ve Amaç
+
+Projenin temel amacı, coğrafi bilgi sistemleri (GIS), gerçek zamanlı veri işleme ve mobil sensör füzyonu tekniklerini kullanarak bir "akıllı asistan" yapısı kurgulamaktır. Çalışma kapsamında aşağıdaki akademik problem çözümlerine odaklanılmıştır:
+
+- **Mekansal İndeksleme:** Büyük ölçekli koordinat verileri üzerinde düşük gecikmeli sorgulama.
+- **Vektörel Yönelim Filtreleme:** Kullanıcının sadece hareket yönündeki tehditleri algılayan trigonometrik modellerin geliştirilmesi.
+- **Batarya Optimizasyonu:** Arka planda sürekli çalışan servislerin Android yaşam döngüsü kurallarına (Doze mode, Foreground limits) uygun şekilde optimize edilmesi.
+
+---
+
+## Teknik Mimari
+
+Proje, modern yazılım mimarisi prensipleri doğrultusunda yapılandırılmış bir Android uygulamasından (Mobil İstemci) oluşmaktadır. Geliştirme sürecinde ihtiyaç duyulan veriler dışarıdan temin edilerek sisteme entegre edilmiştir.
+
+### 1. Veri Edinimi (Scraping)
+Uygulama kapsamında kullanılan hız kamerası lokasyon verileri, Emniyet Genel Müdürlüğü (EGM) açık harita servislerinden Selenium tabanlı dinamik web scraping ve HTTP request teknikleri kullanılarak elde edilmiş ve normalize edildikten sonra uygulamanın yerel kaynaklarına (`assets/eds_data.json`) entegre edilmiştir.
+
+### 2. Mobil Uygulama Katmanı (Android & Kotlin)
+Uygulama, yüksek performanslı mekansal hesaplamalar için özelleştirilmiş bir motor barındırır.
+
+#### A. Mekansal Hesaplama Motoru (Spatial Engine)
+Hatalı pozitif uyarıları (paralel yollar, ters istikametteki kameralar) engellemek için iki aşamalı bir filtreleme uygulanır:
+- **Haversine Formülü:** Küresel yüzey üzerindeki iki nokta arasındaki büyük daire mesafesini (Great-circle distance) hesaplar.
+- **Azimut (Rulman) Analizi:** Kullanıcının hareket vektörü ile EDS kamerasının bakış açısı arasındaki açısal farkı analiz eder. `θ < 25°` tolerans aralığındaki kameralar "tehdit" olarak nitelendirilir.
+
+#### B. Veri Yönetimi ve Kalıcılık
+- **Room Persistence Library:** EDS verileri SQLite tabanlı bir veritabanında saklanır.
+- **Bounding Box Query:** Performans için önce bir sınırlayıcı kutu sorgusu (Latitude/Longitude range) yapılarak aday noktalar küçültülür, ardından maliyetli trigonometrik hesaplamalar sadece bu küme üzerinde çalıştırılır.
+
+#### C. Arka Plan Servisi ve UI (Overlay Service)
+- **Foreground Service:** Uygulama kapalıyken dahi çalışmaya devam eden, düşük bellek öncelikli bir servis mimarisi.
+- **Custom View Animation:** `GlowParticlesView` ile ortam ışıklandırması ve görsel uyarılar için optimize edilmiş, donanım hızlandırmalı bir animasyon motoru (Spotify ambient tarzı) kullanılmıştır.
+
+---
+
+## Matematiksel Temeller
+
+Sistemde kullanılan mesafe hesaplama algoritması şu şekildedir:
+
+$$d = 2r \arcsin\left(\sqrt{\sin^2\left(\frac{\phi_2 - \phi_1}{2}\right) + \cos(\phi_1) \cos(\phi_2) \sin^2\left(\frac{\lambda_2 - \lambda_1}{2}\right)}\right)$$
+
+Burada $\phi$ enlem, $\lambda$ boylam ve $r$ Dünya yarıçapıdır (6,371 km).
+
+---
+
+## Güvenlik ve Etik Bildirimi
+
+Bu uygulama, **kesinlikle trafik kurallarını ihlal etmeye teşvik amacı gütmemektedir.** Aksine, sürücülerin hız limitlerine uymasını sağlayarak trafik güvenliğini artırmak ve ani frenleme gibi riskli davranışları azaltmak için tasarlanmıştır. Kullanılan veriler eğitim amaçlıdır ve akademik bir projenin çıktısıdır.
+
+> [!IMPORTANT]
+> Proje ile ilgili herhangi bir telif hakkı, veri kullanımı veya güvenlik endişesi durumunda lütfen akademik danışmanım veya şahsım ile iletişime geçiniz.
+
+---
+
+## İletişim
+
+**Geliştirici:** Tufan Kaan İsli  
+**Kurum:** İstanbul Teknik Üniversitesi (İTÜ), Bilgisayar Mühendisliği  
+**E-posta:** [isli23@itu.edu.tr](mailto:isli23@itu.edu.tr)
+
+© 2026 - Eğitim Amaçlı Proje Geliştirme Çalışması

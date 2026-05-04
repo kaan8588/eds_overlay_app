@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Switch track color: green when checked, subtle gray when unchecked -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="#80388E3C" android:state_checked="true" />
+    <item android:color="#40FFFFFF" />
+</selector>

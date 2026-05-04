@@ -278,6 +278,12 @@ class FeedbackActivity : AppCompatActivity() {
         binding.etMessage.setTextColor(if (isDarkMode) 0xDDFFFFFF.toInt() else 0xDD1A1A1A.toInt())
         binding.etMessage.setHintTextColor(if (isDarkMode) 0x35FFFFFF.toInt() else 0x351A1A1A.toInt())
 
+        // Send button — dark/light glass reflection
+        binding.btnSendFeedback.setBackgroundResource(
+            if (isDarkMode) R.drawable.bg_button_green_glass_dark else R.drawable.bg_button_green_glass
+        )
+        binding.btnSendFeedback.backgroundTintList = null
+
         // Scanline effect
         val scanline = buildScanlineDrawable(if (isDarkMode) 0x1D000000 else 0x15000000)
         binding.scanlineOverlayFeedback.background = scanline

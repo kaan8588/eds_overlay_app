@@ -89,5 +89,5 @@
     <string name="feedback_no_email_app">No email app found</string>
     <string name="feedback_location_denied">Location permission denied. Location will not be shared.</string>
     <string name="feedback_location_unavailable">Location unavailable</string>
-    <string name="feedback_privacy_notice">🔒 Muavin does not use an internet connection. Your feedback is sent through your own email app — you see and approve the content before sending. Your location is shared only when you allow it and only for this feedback.</string>
+    <string name="feedback_privacy_notice"> Muavin does not use an internet connection. Your feedback is sent through your own email app — you see and approve the content before sending. Your location is shared only when you allow it and only for this feedback.</string>
 </resources>

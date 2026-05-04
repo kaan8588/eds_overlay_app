@@ -21,15 +21,15 @@
                 android:color="#40FFFFFF" />
         </shape>
     </item>
-    <!-- Yansıma -->
+    <!-- Yansıma — koyu yeşilimsi, belirgin -->
     <item android:top="2dp" android:bottom="2dp" android:left="2dp" android:right="2dp">
         <shape android:shape="rectangle">
             <corners android:radius="14dp" />
             <gradient
                 android:angle="135"
-                android:startColor="#30FFFFFF"
-                android:centerColor="#00FFFFFF"
-                android:endColor="#00FFFFFF" />
+                android:startColor="#55C8E6CA"
+                android:centerColor="#14A5D6A7"
+                android:endColor="#00000000" />
         </shape>
     </item>
 </layer-list>

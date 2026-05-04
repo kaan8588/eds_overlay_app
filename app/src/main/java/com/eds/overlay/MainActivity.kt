@@ -253,21 +253,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateUI() {
+        val btnBg = if (isDarkMode) R.drawable.bg_button_green_glass_dark else R.drawable.bg_button_green_glass
         if (isServiceRunning) {
             binding.tvServiceStatus.text = getString(R.string.status_active)
             binding.tvServiceStatus.setTextColor(
-                if (isDarkMode) 0xFF4CAF50.toInt() else 0xFF2E7D32.toInt()
+                if (isDarkMode) 0xFF4CAF50.toInt() else 0xFF388E3C.toInt()
             )
             binding.btnToggle.text = getString(R.string.stop_service)
-            binding.btnToggle.backgroundTintList = ColorStateList.valueOf(0xFF2E7D32.toInt())
-            binding.btnToggle.setTextColor(0xFFFFFFFF.toInt())
         } else {
             binding.tvServiceStatus.text = getString(R.string.status_inactive)
             binding.tvServiceStatus.setTextColor(0xFFFF5252.toInt())
             binding.btnToggle.text = getString(R.string.start_service)
-            binding.btnToggle.backgroundTintList = ColorStateList.valueOf(0xFF2E7D32.toInt())
-            binding.btnToggle.setTextColor(0xFFFFFFFF.toInt())
         }
+        binding.btnToggle.setBackgroundResource(btnBg)
+        binding.btnToggle.backgroundTintList = null
+        binding.btnToggle.setTextColor(0xFFFFFFFF.toInt())
     }
 
     private fun autoImportOnFirstLaunch() {

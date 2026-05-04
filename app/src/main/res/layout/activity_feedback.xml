@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:paddingHorizontal="20dp"
+            android:paddingHorizontal="36dp"
             android:paddingTop="16dp"
             android:paddingBottom="24dp">
 
@@ -114,7 +114,7 @@
                     android:minHeight="48dp"
                     android:checked="false"
                     app:thumbTint="#26BC51"
-                    app:trackTint="#40FFFFFF" />
+                    app:trackTint="@color/switch_track_color" />
             </LinearLayout>
 
             <!-- Quick Issue Selection -->

@@ -1,36 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="#20FFFFFF">
-    <item android:id="@android:id/mask">
-        <shape android:shape="rectangle">
-            <solid android:color="#FFFFFF" />
-            <corners android:radius="16dp" />
-        </shape>
-    </item>
-    <item>
-        <layer-list>
-            <!-- Ana Cam Gövde — soluk, info_text renk tonunda -->
-            <item>
-                <shape android:shape="rectangle">
-                    <solid android:color="#18FFFFFF" />
-                    <corners android:radius="16dp" />
-                    <stroke
-                        android:width="1dp"
-                        android:color="#25FFFFFF" />
-                </shape>
-            </item>
-            <!-- Yansıtıcı Üst Katman -->
-            <item>
-                <shape android:shape="rectangle">
-                    <corners android:radius="16dp" />
-                    <gradient
-                        android:angle="135"
-                        android:startColor="#15FFFFFF"
-                        android:centerColor="#00FFFFFF"
-                        android:endColor="#00FFFFFF"
-                        android:type="linear" />
-                </shape>
-            </item>
-        </layer-list>
-    </item>
-</ripple>
+<!-- Subtle radial green glow behind feedback button text — like ambient particles -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="20dp" />
+    <gradient
+        android:type="radial"
+        android:centerX="0.5"
+        android:centerY="0.5"
+        android:gradientRadius="120dp"
+        android:startColor="#304CAF50"
+        android:endColor="#004CAF50" />
+</shape>

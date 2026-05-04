@@ -35,6 +35,12 @@ Hatalı pozitif uyarıları (paralel yollar, ters istikametteki kameralar) engel
 - **Foreground Service:** Uygulama kapalıyken dahi çalışmaya devam eden, düşük bellek öncelikli bir servis mimarisi.
 - **Custom View Animation:** `GlowParticlesView` ile ortam ışıklandırması ve görsel uyarılar için optimize edilmiş, donanım hızlandırmalı bir animasyon motoru (Spotify ambient tarzı) kullanılmıştır.
 
+#### D. Geri Bildirim ve Gizlilik Mimarisi (Privacy-First Feedback)
+Sistemin kitle kaynaklı veri toplama (eksik/hatalı radar bildirimi) altyapısı, ağ izolasyonu (network isolation) prensibiyle tasarlanmıştır:
+- **İnternet Bağımsızlığı:** Uygulama hiçbir şekilde `INTERNET` izni talep etmez. İletişim, `Intent.ACTION_SENDTO` kullanılarak işletim sistemine devredilir ve veri bütünlüğü kullanıcının kendi mail istemcisi üzerinden sağlanır.
+- **Opt-in Veri İşleme:** Hata tespiti için gereken GPS verileri, yalnızca kullanıcının açık rızasıyla ve anlık `lastKnownLocation` kullanılarak elde edilir. Tüm konum ve donanım verileri telefon içerisinde işlenerek cihaz dışına izinsiz çıkarılmaz.
+- **Dinamik Ekran Adaptasyonu:** `WindowInsets` API kullanılarak küçük ekranlı cihazlar ve klavye (IME) etkileşimleri için otonom kaydırma (auto-scroll) ve duyarlı (responsive) layout mekanizmaları eklenmiştir.
+
 ---
 
 ## Matematiksel Temeller

@@ -128,6 +128,9 @@ class MainActivity : AppCompatActivity() {
         binding.btnImport.setOnClickListener { importData() }
         binding.btnLanguage.setOnClickListener { switchLanguage() }
         binding.btnTheme.setOnClickListener { toggleTheme() }
+        binding.btnFeedback.setOnClickListener {
+            startActivity(Intent(this, FeedbackActivity::class.java))
+        }
     }
 
 
@@ -155,9 +158,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnObNext.setOnClickListener {
             onboardingStep++
-            if (onboardingStep == 2) {
+            if (onboardingStep <= 3) {
                 animateTransition { updateOnboardingUI() }
-            } else if (onboardingStep == 3) {
+            } else if (onboardingStep == 4) {
                 requestPermissions()
             }
         }
@@ -169,6 +172,10 @@ class MainActivity : AppCompatActivity() {
             binding.tvObMsg.text = getString(R.string.onboarding_msg)
             binding.btnObNext.text = getString(R.string.onboarding_next)
         } else if (onboardingStep == 2) {
+            binding.tvObTitle.text = getString(R.string.onboarding_orientation_title)
+            binding.tvObMsg.text = getString(R.string.onboarding_orientation_msg)
+            binding.btnObNext.text = getString(R.string.onboarding_next)
+        } else if (onboardingStep == 3) {
             binding.tvObTitle.text = getString(R.string.permission_promise_title)
             binding.tvObMsg.text = getString(R.string.permission_promise_msg)
             binding.btnObNext.text = getString(R.string.permission_grant)
@@ -252,15 +259,13 @@ class MainActivity : AppCompatActivity() {
                 if (isDarkMode) 0xFF4CAF50.toInt() else 0xFF2E7D32.toInt()
             )
             binding.btnToggle.text = getString(R.string.stop_service)
-            binding.btnToggle.backgroundTintList = ColorStateList.valueOf(0xFFF44336.toInt())
+            binding.btnToggle.backgroundTintList = ColorStateList.valueOf(0xFF2E7D32.toInt())
             binding.btnToggle.setTextColor(0xFFFFFFFF.toInt())
         } else {
             binding.tvServiceStatus.text = getString(R.string.status_inactive)
             binding.tvServiceStatus.setTextColor(0xFFFF5252.toInt())
             binding.btnToggle.text = getString(R.string.start_service)
-            binding.btnToggle.backgroundTintList = ColorStateList.valueOf(
-                if (isDarkMode) 0xFF26BC51.toInt() else 0xFF2E7D32.toInt()
-            )
+            binding.btnToggle.backgroundTintList = ColorStateList.valueOf(0xFF2E7D32.toInt())
             binding.btnToggle.setTextColor(0xFFFFFFFF.toInt())
         }
     }
@@ -396,6 +401,9 @@ class MainActivity : AppCompatActivity() {
         binding.tvInfoText.setTextColor(fadedTextColor)
         binding.btnImport.setTextColor(ultraFadedTextColor)
         binding.tvPointCount.setTextColor(if (isDarkMode) 0x15FFFFFF.toInt() else 0x151A1A1A.toInt())
+
+        // Feedback button — matches info text style
+        binding.btnFeedback.setTextColor(fadedTextColor)
 
         // Status card label
         binding.tvStatusLabel.setTextColor(dimTextColor)

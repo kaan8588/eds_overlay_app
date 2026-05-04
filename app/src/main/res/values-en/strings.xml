@@ -45,7 +45,7 @@
     <string name="onboarding_msg">I track radars along the way and protect you from fines.</string>
     <string name="onboarding_next">Continue</string>
     <string name="permission_promise_title">A Small Permission</string>
-    <string name="permission_promise_msg">I need permissions to see the radars around you. Muavin does not share your data with third parties.</string>
+    <string name="permission_promise_msg">I need permissions to see the radars around you. Your data is processed within your phone without leaving it, and Muavin does not share your data with third parties.</string>
     <string name="permission_grant">Got it, Allow</string>
     <string name="permission_denied_msg">Some permissions were denied. Muavin needs all permissions to work correctly.</string>
     <string name="permission_retry">Try Again</string>
@@ -61,4 +61,33 @@
     <string name="tts_alert_danger">Attention! You are exceeding the speed limit. The limit is %d kilometers.</string>
     <string name="notification_title">EDS Surveillance Active</string>
     <string name="notification_text">Speed cameras are being monitored</string>
+
+    <!-- Onboarding: Phone Orientation -->
+    <string name="onboarding_orientation_title">Phone Orientation</string>
+    <string name="onboarding_orientation_msg">Hold your phone in the same direction as the vehicle while using the app.\nThis helps Muavin guide you more accurately.</string>
+
+    <!-- Feedback Screen -->
+    <string name="feedback_button">Feedback</string>
+    <string name="feedback_title">Feedback</string>
+    <string name="feedback_subtitle">Let us know if radar data is missing or incorrect.</string>
+    <string name="feedback_back">← Back</string>
+    <string name="feedback_send_location">Send My Location</string>
+    <string name="feedback_send_location_desc">Optional. If enabled, your current location is added to the email for this feedback only.</string>
+    <string name="feedback_quick_issues">Quick Issue Options</string>
+    <string name="feedback_wrong_radar">Radar data at my location is wrong</string>
+    <string name="feedback_wrong_location">My location data is wrong</string>
+    <string name="feedback_wrong_speed">App shows wrong speed</string>
+    <string name="feedback_missing_radar">Missing radar at this location</string>
+    <string name="feedback_wrong_limit">Speed limit is shown incorrectly</string>
+    <string name="feedback_app_crash">App crashes / freezes</string>
+    <string name="feedback_message_label">Your Message</string>
+    <string name="feedback_message_hint">Describe the issue in detail…</string>
+    <string name="feedback_send">Send</string>
+    <string name="feedback_success">✓ Your message has been sent successfully</string>
+    <string name="feedback_go_back">Return to Home</string>
+    <string name="feedback_choose_app">Choose an email app</string>
+    <string name="feedback_no_email_app">No email app found</string>
+    <string name="feedback_location_denied">Location permission denied. Location will not be shared.</string>
+    <string name="feedback_location_unavailable">Location unavailable</string>
+    <string name="feedback_privacy_notice">🔒 Muavin does not use an internet connection. Your feedback is sent through your own email app — you see and approve the content before sending. Your location is shared only when you allow it and only for this feedback.</string>
 </resources>

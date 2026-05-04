@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/feedback_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_main_dark">
+
+    <com.eds.overlay.ui.GlowParticlesView
+        android:id="@+id/glow_particles_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <View
+        android:id="@+id/scanline_overlay_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ScrollView
+        android:id="@+id/scroll_view_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="false"
+        android:overScrollMode="always"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/layout_feedback_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp">
+
+            <!-- Back Button — direct, no wrapper -->
+            <Button
+                android:id="@+id/btn_back"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_gravity="start"
+                android:gravity="center_vertical|start"
+                android:minWidth="48dp"
+                android:text="@string/feedback_back"
+                android:textColor="#80FFFFFF"
+                android:textSize="14sp" />
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/tv_feedback_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="@string/feedback_title"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_feedback_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="@string/feedback_subtitle"
+                android:textColor="#60FFFFFF"
+                android:textSize="12sp" />
+
+            <!-- Location Toggle Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_feedback_card"
+                android:gravity="center_vertical"
+                android:minHeight="56dp"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="12dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_location_toggle_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feedback_send_location"
+                        android:textColor="#B0FFFFFF"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_location_toggle_desc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/feedback_send_location_desc"
+                        android:textColor="#50FFFFFF"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_send_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="48dp"
+                    android:minHeight="48dp"
+                    android:checked="false"
+                    app:thumbTint="#26BC51"
+                    app:trackTint="#40FFFFFF" />
+            </LinearLayout>
+
+            <!-- Quick Issue Selection -->
+            <TextView
+                android:id="@+id/tv_quick_issues_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:letterSpacing="0.05"
+                android:text="@string/feedback_quick_issues"
+                android:textAllCaps="true"
+                android:textColor="#60FFFFFF"
+                android:textSize="11sp" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_issues"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:chipSpacingVertical="4dp"
+                app:singleSelection="false">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_wrong_radar"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/feedback_wrong_radar"
+                    android:textColor="#B0FFFFFF"
+                    android:textSize="11sp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    app:chipBackgroundColor="@color/chip_feedback_bg"
+                    app:chipStrokeColor="#25FFFFFF"
+                    app:chipStrokeWidth="1dp"
+                    app:chipCornerRadius="12dp"
+                    app:chipMinHeight="36dp"
+                    app:checkedIconEnabled="true"
+                    app:checkedIconTint="#26BC51" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_wrong_location"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/feedback_wrong_location"
+                    android:textColor="#B0FFFFFF"
+                    android:textSize="11sp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    app:chipBackgroundColor="@color/chip_feedback_bg"
+                    app:chipStrokeColor="#25FFFFFF"
+                    app:chipStrokeWidth="1dp"
+                    app:chipCornerRadius="12dp"
+                    app:chipMinHeight="36dp"
+                    app:checkedIconEnabled="true"
+                    app:checkedIconTint="#26BC51" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_wrong_speed"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/feedback_wrong_speed"
+                    android:textColor="#B0FFFFFF"
+                    android:textSize="11sp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    app:chipBackgroundColor="@color/chip_feedback_bg"
+                    app:chipStrokeColor="#25FFFFFF"
+                    app:chipStrokeWidth="1dp"
+                    app:chipCornerRadius="12dp"
+                    app:chipMinHeight="36dp"
+                    app:checkedIconEnabled="true"
+                    app:checkedIconTint="#26BC51" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_missing_radar"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/feedback_missing_radar"
+                    android:textColor="#B0FFFFFF"
+                    android:textSize="11sp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    app:chipBackgroundColor="@color/chip_feedback_bg"
+                    app:chipStrokeColor="#25FFFFFF"
+                    app:chipStrokeWidth="1dp"
+                    app:chipCornerRadius="12dp"
+                    app:chipMinHeight="36dp"
+                    app:checkedIconEnabled="true"
+                    app:checkedIconTint="#26BC51" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_wrong_limit"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/feedback_wrong_limit"
+                    android:textColor="#B0FFFFFF"
+                    android:textSize="11sp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    app:chipBackgroundColor="@color/chip_feedback_bg"
+                    app:chipStrokeColor="#25FFFFFF"
+                    app:chipStrokeWidth="1dp"
+                    app:chipCornerRadius="12dp"
+                    app:chipMinHeight="36dp"
+                    app:checkedIconEnabled="true"
+                    app:checkedIconTint="#26BC51" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_app_crash"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/feedback_app_crash"
+                    android:textColor="#B0FFFFFF"
+                    android:textSize="11sp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    app:chipBackgroundColor="@color/chip_feedback_bg"
+                    app:chipStrokeColor="#25FFFFFF"
+                    app:chipStrokeWidth="1dp"
+                    app:chipCornerRadius="12dp"
+                    app:chipMinHeight="36dp"
+                    app:checkedIconEnabled="true"
+                    app:checkedIconTint="#26BC51" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <!-- Message Box -->
+            <TextView
+                android:id="@+id/tv_message_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:letterSpacing="0.05"
+                android:text="@string/feedback_message_label"
+                android:textAllCaps="true"
+                android:textColor="#60FFFFFF"
+                android:textSize="11sp" />
+
+            <EditText
+                android:id="@+id/et_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_edittext_feedback"
+                android:gravity="top|start"
+                android:hint="@string/feedback_message_hint"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLines="6"
+                android:minHeight="100dp"
+                android:padding="14dp"
+                android:textColor="#DDFFFFFF"
+                android:textColorHint="#35FFFFFF"
+                android:textSize="14sp" />
+
+            <!-- Send Button -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_send_feedback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_button_green_glass"
+                android:minHeight="48dp"
+                android:padding="0dp"
+                android:stateListAnimator="@animator/btn_press_animator"
+                android:text="@string/feedback_send"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:backgroundTint="@null" />
+
+            <!-- Success Message (hidden by default) -->
+            <LinearLayout
+                android:id="@+id/layout_success"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_feedback_card"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_success_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/feedback_success"
+                    android:textColor="#4CAF50"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btn_go_back"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp"
+                    android:minWidth="48dp"
+                    android:text="@string/feedback_go_back"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Privacy Notice -->
+            <TextView
+                android:id="@+id/tv_privacy_notice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:lineSpacingExtra="3dp"
+                android:text="@string/feedback_privacy_notice"
+                android:textColor="#30FFFFFF"
+                android:textSize="10sp" />
+
+            <!-- Bottom spacer for nav bar clearance -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="24dp" />
+        </LinearLayout>
+    </ScrollView>
+
+</FrameLayout>

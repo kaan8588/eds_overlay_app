@@ -45,7 +45,7 @@
     <string name="onboarding_msg">Yol boyunca radarları takip eder, seni cezalardan korurum.</string>
     <string name="onboarding_next">Devam</string>
     <string name="permission_promise_title">Küçük Bir İzin</string>
-    <string name="permission_promise_msg">Etrafınızdaki radarları görmek için izinlere ihtiyacım var. Muavin verilerinizi üçüncü kişilerle paylaşmaz.</string>
+    <string name="permission_promise_msg">Etrafınızdaki radarları görmek için izinlere ihtiyacım var. Verileriniz dışarı çıkmadan telefonunuz içerisinde işlenir ve Muavin verilerinizi üçüncü kişilerle paylaşmaz.</string>
     <string name="permission_grant">Anladım, İzin Ver</string>
     <string name="permission_denied_msg">Bazı izinler verilmedi. Muavin\'in düzgün çalışması için tüm izinlere ihtiyacı var.</string>
     <string name="permission_retry">Tekrar Dene</string>
@@ -61,4 +61,33 @@
     <string name="tts_alert_danger">Dikkat! Hız sınırını aşıyorsunuz. Limit %d kilometre.</string>
     <string name="notification_title">EDS Gözetim Aktif</string>
     <string name="notification_text">Hız kameraları izleniyor</string>
+
+    <!-- Onboarding: Phone Orientation -->
+    <string name="onboarding_orientation_title">Telefon Yönü</string>
+    <string name="onboarding_orientation_msg">Kullanırken telefonunuzu araç ile aynı yönde tutunuz.\nBöylece Muavin sizi daha doğru bir şekilde yönlendirebilir.</string>
+
+    <!-- Feedback Screen -->
+    <string name="feedback_button">Geri Bildirim</string>
+    <string name="feedback_title">Geri Bildirim</string>
+    <string name="feedback_subtitle">Radar verilerinin eksik veya hatalı olma ihtimaline karşı bize bildirin.</string>
+    <string name="feedback_back">← Geri</string>
+    <string name="feedback_send_location">Bulunduğum Konumu Gönder</string>
+    <string name="feedback_send_location_desc">İsteğe bağlı. Açarsanız, yalnızca bu geri bildirim için anlık konumunuz e-postaya eklenir.</string>
+    <string name="feedback_quick_issues">Hızlı İletişim Seçenekleri</string>
+    <string name="feedback_wrong_radar">Bulunduğum konumdaki radar verisi yanlış</string>
+    <string name="feedback_wrong_location">Konum verim yanlış</string>
+    <string name="feedback_wrong_speed">Uygulama hızımı yanlış gösteriyor</string>
+    <string name="feedback_missing_radar">Bu konumda eksik radar var</string>
+    <string name="feedback_wrong_limit">Hız limiti yanlış gösteriliyor</string>
+    <string name="feedback_app_crash">Uygulama çöküyor / donuyor</string>
+    <string name="feedback_message_label">Mesajınız</string>
+    <string name="feedback_message_hint">Sorunu detaylı bir şekilde açıklayın…</string>
+    <string name="feedback_send">Gönder</string>
+    <string name="feedback_success">✓ Mesajınız başarıyla iletildi</string>
+    <string name="feedback_go_back">Ana Sayfaya Dön</string>
+    <string name="feedback_choose_app">E-posta uygulaması seçin</string>
+    <string name="feedback_no_email_app">E-posta uygulaması bulunamadı</string>
+    <string name="feedback_location_denied">Konum izni verilmedi. Konum paylaşılmayacak.</string>
+    <string name="feedback_location_unavailable">Konum alınamadı</string>
+    <string name="feedback_privacy_notice"> Muavin internet bağlantısı kullanmaz. Geri bildiriminiz kendi e-posta uygulamanız üzerinden gönderilir — göndermeden önce içeriği görür ve onaylarsınız. Konum bilginiz yalnızca siz izin verdiğinizde ve yalnızca bu geri bildirim için paylaşılır.</string>
 </resources>

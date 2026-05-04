@@ -126,12 +126,27 @@
             android:id="@+id/tv_info_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="4dp"
             android:gravity="center"
             android:lineSpacingExtra="4dp"
             android:text="@string/info_text"
             android:textColor="#40FFFFFF"
             android:textSize="11sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_feedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_button_feedback_glass"
+            android:letterSpacing="0.05"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:stateListAnimator="@animator/btn_press_animator"
+            android:text="@string/feedback_button"
+            android:textColor="#40FFFFFF"
+            android:textSize="10sp"
+            app:backgroundTint="@null" />
 
         <Button
             android:id="@+id/btn_import"

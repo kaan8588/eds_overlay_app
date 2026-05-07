@@ -52,7 +52,7 @@ class DrivingDetector(private val context: Context) {
 
         try {
             client.requestActivityUpdates(DETECTION_INTERVAL, getPendingIntent())
-                .addOnSuccessListener { Log.d(TAG, "Activity updates requested") }
+                .addOnSuccessListener { /* Activity updates requested */ }
                 .addOnFailureListener { e -> Log.e(TAG, "Failed to request activity updates", e) }
         } catch (e: SecurityException) {
             Log.e(TAG, "SecurityException: Missing activity recognition permission", e)
@@ -72,7 +72,7 @@ class DrivingDetector(private val context: Context) {
 
     private fun handleActivityResult(result: ActivityRecognitionResult) {
         val mostProbable = result.mostProbableActivity
-        Log.d(TAG, "Activity: ${mostProbable.type}, Confidence: ${mostProbable.confidence}")
+        // Activity log removed for production
 
         if (mostProbable.confidence < CONFIDENCE_THRESHOLD) return
 

@@ -87,7 +87,7 @@ class EdsRepository(private val dao: EdsDao) {
                 dao.replaceAll(points)
                 cache.evictAll()
                 val count = dao.getCount()
-                Log.i(TAG, "Imported $count EDS points from assets")
+                // Import complete
                 count
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to import EDS data", e)

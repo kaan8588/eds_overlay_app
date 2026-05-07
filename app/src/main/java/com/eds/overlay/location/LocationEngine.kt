@@ -78,7 +78,7 @@ class LocationEngine(private val context: Context) {
 
         client.requestLocationUpdates(request, locationCallback!!, thread.looper)
         isTracking = true
-        Log.i(TAG, "Location tracking started (1s high-accuracy)")
+        // Tracking started
     }
 
     /** Stops location tracking and releases the callback. */
@@ -89,7 +89,7 @@ class LocationEngine(private val context: Context) {
         handlerThread?.quitSafely()
         handlerThread = null
         isTracking = false
-        Log.i(TAG, "Location tracking stopped")
+        // Tracking stopped
     }
 
     /** Returns the last known location synchronously (may be null). */

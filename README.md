@@ -1,6 +1,6 @@
 # EDS Overlay (Assistant): Intelligent Traffic Monitoring and Safety Warning System
 
-This project is a mobile platform solution developed for educational and academic research purposes by **Tufan Kaan İsli**, a student at **Istanbul Technical University, Computer Engineering**. The application aims to increase driver safety and improve traffic awareness using Electronic Detection System (EDS) data.
+This project is a mobile platform solution developed for educational and academic research purposes by Tufan Kaan İsli, a student at Istanbul Technical University, Computer Engineering. The application aims to increase driver safety and improve traffic awareness using Electronic Detection System (EDS) data.
 
 ## Academic Context and Purpose
 
@@ -82,7 +82,7 @@ This application **strictly does not aim to encourage violation of traffic rules
 
 # EDS Overlay (Muavin): Akıllı Trafik Denetleme ve Güvenlik Uyarı Sistemi
 
-Bu proje, **İstanbul Teknik Üniversitesi Bilgisayar Mühendisliği** bölümü öğrencisi **Tufan Kaan İsli** tarafından eğitim ve akademik araştırma amaçlı geliştirilmiş bir mobil platform çözümüdür. Uygulama, Elektronik Denetleme Sistemleri (EDS) verilerini kullanarak sürücü güvenliğini artırmayı ve trafik bilincini geliştirmeyi hedeflemektedir.
+Bu proje, İstanbul Teknik Üniversitesi Bilgisayar Mühendisliği bölümü öğrencisi Tufan Kaan İsli tarafından eğitim ve akademik araştırma amaçlı geliştirilmiş bir mobil platform çözümüdür. Uygulama, Elektronik Denetleme Sistemleri (EDS) verilerini kullanarak sürücü güvenliğini artırmayı ve trafik bilincini geliştirmeyi hedeflemektedir.
 
 ## Akademik Bağlam ve Amaç
 

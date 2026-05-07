@@ -20,9 +20,9 @@ class LocationEngine(private val context: Context) {
 
     companion object {
         private const val TAG = "LocationEngine"
-        private const val INTERVAL_MS = 1_000L          // 1-second updates
-        private const val FASTEST_INTERVAL_MS = 500L     // minimum interval
-        private const val SMALLEST_DISPLACEMENT_M = 2f   // ignore micro-jitter
+        private const val INTERVAL_MS = 500L              // 0.5-second updates
+        private const val FASTEST_INTERVAL_MS = 250L     // minimum interval
+        private const val SMALLEST_DISPLACEMENT_M = 1f   // ignore micro-jitter
     }
 
     private val client: FusedLocationProviderClient =

@@ -105,11 +105,12 @@ class EdsRepository(private val dao: EdsDao) {
      * Cache key includes [radiusKm] so different radii at the same location
      * never collide and return stale results.
      */
-    suspend fun getNearbyPoints(lat: Double, lng: Double, radiusKm: Double): List<EdsPoint> = cacheMutex.withLock {
+    suspend fun getNearbyPoints(lat: Double, lng: Double, radiusKm: Double): List<EdsPoint> {
         // Quantize coordinates to ~100m and include radius to form a stable cache key
         val queryKey = "%.3f,%.3f,%.1f".format(lat, lng, radiusKm)
 
-        cache.get(queryKey)?.let { return@withLock it }
+        // Fast-path: check cache under short lock
+        cacheMutex.withLock { cache.get(queryKey) }?.let { return it }
 
         val dLat = radiusKm * DEG_PER_KM_LAT
         val dLng = radiusKm * degPerKmLng(lat)
@@ -123,9 +124,9 @@ class EdsRepository(private val dao: EdsDao) {
             )
         }
 
-        cache.put(queryKey, result)
+        cacheMutex.withLock { cache.put(queryKey, result) }
 
-        result
+        return result
     }
 
     suspend fun getCount(): Int = dao.getCount()

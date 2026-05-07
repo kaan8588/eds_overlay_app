@@ -1,12 +1,12 @@
 package com.eds.overlay
 
 import android.Manifest
-
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.net.Uri
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
     private val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
         val allGranted = permissions.entries.all { it.value }
         if (allGranted) {
-            finishOnboarding()
+            requestBackgroundLocationOrFinish()
         } else {
             // Some permissions were denied — show a retry prompt so the user
             // is not stuck behind the dimmed onboarding overlay.
@@ -64,6 +64,14 @@ class MainActivity : AppCompatActivity() {
             binding.btnObNext.text = getString(R.string.permission_retry)
             binding.btnObNext.setOnClickListener { requestPermissions() }
         }
+    }
+
+    private val backgroundLocationLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { _ ->
+        // Whether granted or denied, finish onboarding.
+        // App works without background location, just less reliably.
+        finishOnboarding()
     }
 
     private val overlayLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -102,7 +110,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val app = application as EDSApplication
-        repository = EdsRepository(app.database.edsDao())
+        repository = app.repository
 
         setupListeners()
 
@@ -166,20 +174,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateOnboardingUI() {
-        if (onboardingStep == 1) {
+    private fun updateOnboardingUI() = when (onboardingStep) {
+        1 -> {
             binding.tvObTitle.text = getString(R.string.onboarding_title)
             binding.tvObMsg.text = getString(R.string.onboarding_msg)
             binding.btnObNext.text = getString(R.string.onboarding_next)
-        } else if (onboardingStep == 2) {
+        }
+        2 -> {
             binding.tvObTitle.text = getString(R.string.onboarding_orientation_title)
             binding.tvObMsg.text = getString(R.string.onboarding_orientation_msg)
             binding.btnObNext.text = getString(R.string.onboarding_next)
-        } else if (onboardingStep == 3) {
+        }
+        3 -> {
             binding.tvObTitle.text = getString(R.string.permission_promise_title)
             binding.tvObMsg.text = getString(R.string.permission_promise_msg)
             binding.btnObNext.text = getString(R.string.permission_grant)
         }
+        else -> {}
     }
 
     private fun animateTransition(action: () -> Unit) {
@@ -213,6 +224,22 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) perms.add(Manifest.permission.POST_NOTIFICATIONS)
 
         permissionLauncher.launch(perms.toTypedArray())
+    }
+
+    private fun requestBackgroundLocationOrFinish() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+            checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Show rationale then request — system handles the Settings redirect on API 30+
+            binding.tvObTitle.text = getString(R.string.permission_promise_title)
+            binding.tvObMsg.text = getString(R.string.permission_background_msg)
+            binding.btnObNext.text = getString(R.string.permission_grant)
+            binding.btnObNext.setOnClickListener {
+                backgroundLocationLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            }
+        } else {
+            finishOnboarding()
+        }
     }
 
     private fun startQuoteTimer() {
@@ -253,7 +280,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateUI() {
-        val btnBg = if (isDarkMode) R.drawable.bg_button_green_glass_dark else R.drawable.bg_button_green_glass
+        val btnBg = if (isServiceRunning) {
+            if (isDarkMode) R.drawable.bg_button_red_glass_dark else R.drawable.bg_button_red_glass
+        } else {
+            if (isDarkMode) R.drawable.bg_button_green_glass_dark else R.drawable.bg_button_green_glass
+        }
+        
         if (isServiceRunning) {
             binding.tvServiceStatus.text = getString(R.string.status_active)
             binding.tvServiceStatus.setTextColor(
@@ -422,9 +454,9 @@ class MainActivity : AppCompatActivity() {
 
         // Scanline effect — cached to avoid bitmap leak on repeated theme toggles
         val scanline = if (isDarkMode) {
-            scanlineDarkDrawable ?: buildScanlineDrawable(0x1D000000).also { scanlineDarkDrawable = it }
+            scanlineDarkDrawable ?: buildScanlineDrawable(0x17000000).also { scanlineDarkDrawable = it }
         } else {
-            scanlineLightDrawable ?: buildScanlineDrawable(0x15000000).also { scanlineLightDrawable = it }
+            scanlineLightDrawable ?: buildScanlineDrawable(0x11000000).also { scanlineLightDrawable = it }
         }
         binding.scanlineOverlay.background = scanline
         binding.mainRoot.foreground = null

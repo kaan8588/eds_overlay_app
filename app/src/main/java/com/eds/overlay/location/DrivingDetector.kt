@@ -77,12 +77,12 @@ class DrivingDetector(private val context: Context) {
         if (mostProbable.confidence < CONFIDENCE_THRESHOLD) return
 
         val state = when (mostProbable.type) {
-            DetectedActivity.IN_VEHICLE -> DrivingState.DRIVING
+            DetectedActivity.IN_VEHICLE,
+            DetectedActivity.ON_BICYCLE -> DrivingState.DRIVING
             DetectedActivity.STILL,
             DetectedActivity.ON_FOOT,
             DetectedActivity.WALKING,
-            DetectedActivity.RUNNING,
-            DetectedActivity.ON_BICYCLE -> DrivingState.STATIONARY
+            DetectedActivity.RUNNING -> DrivingState.STATIONARY
             else -> DrivingState.UNKNOWN
         }
 

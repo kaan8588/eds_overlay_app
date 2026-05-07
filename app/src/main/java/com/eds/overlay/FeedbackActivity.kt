@@ -44,6 +44,8 @@ class FeedbackActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityFeedbackBinding
     private var isDarkMode = true
+    private var scanlineDarkDrawable: android.graphics.drawable.BitmapDrawable? = null
+    private var scanlineLightDrawable: android.graphics.drawable.BitmapDrawable? = null
 
     private val prefs by lazy { getSharedPreferences(PREFS_NAME, MODE_PRIVATE) }
 
@@ -171,36 +173,39 @@ class FeedbackActivity : AppCompatActivity() {
 
         val message = binding.etMessage.text.toString().trim()
 
-        // Build email body
+        // Build email body — uses string resources so it respects the active locale
         val body = buildString {
-            appendLine("── Muavin Geri Bildirim ──")
+            appendLine(getString(R.string.feedback_email_header))
             appendLine()
             if (issues.isNotEmpty()) {
-                appendLine("Seçilen Sorunlar:")
+                appendLine(getString(R.string.feedback_email_issues))
                 issues.forEach { appendLine("  • $it") }
                 appendLine()
             }
             if (message.isNotEmpty()) {
-                appendLine("Kullanıcı Mesajı:")
+                appendLine(getString(R.string.feedback_email_user_msg))
                 appendLine(message)
                 appendLine()
             }
             if (locationString != null) {
-                appendLine("Konum: $locationString")
+                appendLine(getString(R.string.feedback_email_location, locationString))
             } else {
-                appendLine("Konum: Paylaşılmadı")
+                appendLine(getString(R.string.feedback_email_no_location))
             }
             appendLine()
-            appendLine("── Cihaz Bilgisi ──")
-            appendLine("Model: ${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}")
-            appendLine("Android: ${android.os.Build.VERSION.RELEASE} (SDK ${android.os.Build.VERSION.SDK_INT})")
-            appendLine("Uygulama Sürümü: ${packageManager.getPackageInfo(packageName, 0).versionName}")
+            appendLine(getString(R.string.feedback_email_device_header))
+            appendLine(getString(R.string.feedback_email_model,
+                "${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}"))
+            appendLine(getString(R.string.feedback_email_android,
+                android.os.Build.VERSION.RELEASE, android.os.Build.VERSION.SDK_INT))
+            appendLine(getString(R.string.feedback_email_app_version,
+                packageManager.getPackageInfo(packageName, 0).versionName))
         }
 
         val subject = if (issues.isNotEmpty()) {
-            "Muavin Geri Bildirim: ${issues.first()}"
+            getString(R.string.feedback_email_subject, issues.first())
         } else {
-            "Muavin Geri Bildirim"
+            getString(R.string.feedback_email_subject_default)
         }
 
         val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
@@ -284,8 +289,12 @@ class FeedbackActivity : AppCompatActivity() {
         )
         binding.btnSendFeedback.backgroundTintList = null
 
-        // Scanline effect
-        val scanline = buildScanlineDrawable(if (isDarkMode) 0x1D000000 else 0x15000000)
+        // Scanline effect — cached to avoid bitmap leak on repeated theme toggles
+        val scanline = if (isDarkMode) {
+            scanlineDarkDrawable ?: buildScanlineDrawable(0x17000000).also { scanlineDarkDrawable = it }
+        } else {
+            scanlineLightDrawable ?: buildScanlineDrawable(0x11000000).also { scanlineLightDrawable = it }
+        }
         binding.scanlineOverlayFeedback.background = scanline
     }
 

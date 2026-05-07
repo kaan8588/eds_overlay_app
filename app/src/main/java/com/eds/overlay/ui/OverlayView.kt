@@ -22,7 +22,6 @@ import kotlin.math.roundToInt
  *  - Blink animation for danger state
  *  - Drag-to-move via touch interception
  */
-@SuppressLint("ClickableViewAccessibility")
 class OverlayView(
     val rootView: View,
     private val layoutParams: WindowManager.LayoutParams,
@@ -117,6 +116,7 @@ class OverlayView(
 
     // ── Drag-to-Move ────────────────────────────────────────────────
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupDragBehavior() {
         var initialX = 0
         var initialY = 0

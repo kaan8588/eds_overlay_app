@@ -7,12 +7,17 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import com.eds.overlay.data.EdsDatabase
+import com.eds.overlay.data.EdsRepository
 import java.util.Locale
 
 class EDSApplication : Application() {
 
     val database: EdsDatabase by lazy {
         EdsDatabase.getInstance(this)
+    }
+
+    val repository: EdsRepository by lazy {
+        EdsRepository(database.edsDao())
     }
 
     override fun attachBaseContext(base: Context) {
@@ -33,18 +38,7 @@ class EDSApplication : Application() {
         super.attachBaseContext(base.createConfigurationContext(config))
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        val prefs = getSharedPreferences("muavin_prefs", Context.MODE_PRIVATE)
-        val lang = prefs.getString("app_lang", "tr") ?: "tr"
-
-        val locale = Locale.forLanguageTag(lang)
-        Locale.setDefault(locale)
-        val config = Configuration(newConfig)
-        config.setLocale(locale)
-        // Note: updateConfiguration is deprecated — locale is re-applied via
-        // attachBaseContext on the next Activity/Service creation cycle.
-    }
+    // Locale is re-applied via attachBaseContext on Activity/Service creation.
 
     override fun onCreate() {
         super.onCreate()

@@ -103,7 +103,7 @@ class OverlayService : Service(), LocationEngine.LocationListener,
     override fun onCreate() {
         super.onCreate()
         val app = application as EDSApplication
-        repository = EdsRepository(app.database.edsDao())
+        repository = app.repository
         locationEngine = LocationEngine(this)
         locationEngine.setListener(this)
         drivingDetector = DrivingDetector(this)

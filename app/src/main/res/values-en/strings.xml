@@ -90,4 +90,20 @@
     <string name="feedback_location_denied">Location permission denied. Location will not be shared.</string>
     <string name="feedback_location_unavailable">Location unavailable</string>
     <string name="feedback_privacy_notice"> Muavin does not use an internet connection. Your feedback is sent through your own email app — you see and approve the content before sending. Your location is shared only when you allow it and only for this feedback.</string>
+
+    <!-- Feedback Email Body (localized) -->
+    <string name="feedback_email_header">── Muavin Feedback ──</string>
+    <string name="feedback_email_issues">Selected Issues:</string>
+    <string name="feedback_email_user_msg">User Message:</string>
+    <string name="feedback_email_location">Location: %1$s</string>
+    <string name="feedback_email_no_location">Location: Not shared</string>
+    <string name="feedback_email_device_header">── Device Info ──</string>
+    <string name="feedback_email_model">Model: %1$s</string>
+    <string name="feedback_email_android">Android: %1$s (SDK %2$d)</string>
+    <string name="feedback_email_app_version">App Version: %1$s</string>
+    <string name="feedback_email_subject">Muavin Feedback: %1$s</string>
+    <string name="feedback_email_subject_default">Muavin Feedback</string>
+
+    <!-- Background Location -->
+    <string name="permission_background_msg">For Muavin to alert you while running in the background, please set location permission to "Allow all the time".</string>
 </resources>

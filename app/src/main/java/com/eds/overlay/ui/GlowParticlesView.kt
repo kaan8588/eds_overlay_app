@@ -41,6 +41,8 @@ class GlowParticlesView @JvmOverloads constructor(
     private val paint = Paint(Paint.FILTER_BITMAP_FLAG)
 
     private var tick = 0f
+    private var lastWidth = 0
+    private var lastHeight = 0
     private companion object {
         const val TICK_WRAP = 100_000f
         const val ORB_COUNT = 5          // reduced from 10
@@ -94,6 +96,9 @@ class GlowParticlesView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         if (w == 0 || h == 0) return
+        if (w == lastWidth && h == lastHeight) return
+        lastWidth = w
+        lastHeight = h
         initOrbs()
         startAnimation()
     }

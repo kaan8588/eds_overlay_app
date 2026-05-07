@@ -90,4 +90,23 @@
     <string name="feedback_location_denied">Konum izni verilmedi. Konum paylaşılmayacak.</string>
     <string name="feedback_location_unavailable">Konum alınamadı</string>
     <string name="feedback_privacy_notice"> Muavin internet bağlantısı kullanmaz. Geri bildiriminiz kendi e-posta uygulamanız üzerinden gönderilir — göndermeden önce içeriği görür ve onaylarsınız. Konum bilginiz yalnızca siz izin verdiğinizde ve yalnızca bu geri bildirim için paylaşılır.</string>
+
+    <!-- Feedback Email Body (localized) -->
+    <string name="feedback_email_header">── Muavin Geri Bildirim ──</string>
+    <string name="feedback_email_issues">Seçilen Sorunlar:</string>
+    <string name="feedback_email_user_msg">Kullanıcı Mesajı:</string>
+    <string name="feedback_email_location">Konum: %1$s</string>
+    <string name="feedback_email_no_location">Konum: Paylaşılmadı</string>
+    <string name="feedback_email_device_header">── Cihaz Bilgisi ──</string>
+    <string name="feedback_email_model">Model: %1$s</string>
+    <string name="feedback_email_android">Android: %1$s (SDK %2$d)</string>
+    <string name="feedback_email_app_version">Uygulama Sürümü: %1$s</string>
+    <string name="feedback_email_subject">Muavin Geri Bildirim: %1$s</string>
+    <string name="feedback_email_subject_default">Muavin Geri Bildirim</string>
+
+    <!-- Overlay unit -->
+    <string name="overlay_unit_kmh" translatable="false">km/h</string>
+
+    <!-- Background Location -->
+    <string name="permission_background_msg">Muavin\'in arka planda çalışırken sizi uyarabilmesi için konum iznini "Her zaman izin ver" olarak ayarlamanız gerekiyor.</string>
 </resources>

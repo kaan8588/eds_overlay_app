@@ -57,12 +57,26 @@ class MainActivity : AppCompatActivity() {
         if (allGranted) {
             requestBackgroundLocationOrFinish()
         } else {
-            // Some permissions were denied — show a retry prompt so the user
-            // is not stuck behind the dimmed onboarding overlay.
+            // Check if any denied permission is permanently denied ("Don't ask again")
+            val deniedPerms = permissions.filter { !it.value }.keys
+            val permanentlyDenied = deniedPerms.any { perm ->
+                !shouldShowRequestPermissionRationale(perm)
+            }
+
             binding.tvObTitle.text = getString(R.string.permission_promise_title)
-            binding.tvObMsg.text = getString(R.string.permission_denied_msg)
-            binding.btnObNext.text = getString(R.string.permission_retry)
-            binding.btnObNext.setOnClickListener { requestPermissions() }
+
+            if (permanentlyDenied) {
+                // User tapped "Don't ask again" — system won't show dialog anymore.
+                // Redirect to app settings instead.
+                binding.tvObMsg.text = getString(R.string.permission_denied_permanent_msg)
+                binding.btnObNext.text = getString(R.string.permission_open_settings)
+                binding.btnObNext.setOnClickListener { openAppSettings() }
+            } else {
+                // User just tapped "Deny" — can still re-request
+                binding.tvObMsg.text = getString(R.string.permission_denied_msg)
+                binding.btnObNext.text = getString(R.string.permission_retry)
+                binding.btnObNext.setOnClickListener { requestPermissions() }
+            }
         }
     }
 
@@ -72,6 +86,17 @@ class MainActivity : AppCompatActivity() {
         // Whether granted or denied, finish onboarding.
         // App works without background location, just less reliably.
         finishOnboarding()
+    }
+
+    private val settingsLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        // User returned from app settings — re-check permissions
+        val allGranted = buildRequiredPermissions().all {
+            checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED
+        }
+        if (allGranted) {
+            requestBackgroundLocationOrFinish()
+        }
+        // If still not granted, user stays on the same screen and can try again
     }
 
     private val overlayLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -166,9 +191,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnObNext.setOnClickListener {
             onboardingStep++
-            if (onboardingStep <= 3) {
+            if (onboardingStep <= 4) {
                 animateTransition { updateOnboardingUI() }
-            } else if (onboardingStep == 4) {
+            } else if (onboardingStep == 5) {
                 requestPermissions()
             }
         }
@@ -186,6 +211,11 @@ class MainActivity : AppCompatActivity() {
             binding.btnObNext.text = getString(R.string.onboarding_next)
         }
         3 -> {
+            binding.tvObTitle.text = getString(R.string.onboarding_wifi_title)
+            binding.tvObMsg.text = getString(R.string.onboarding_wifi_msg)
+            binding.btnObNext.text = getString(R.string.onboarding_next)
+        }
+        4 -> {
             binding.tvObTitle.text = getString(R.string.permission_promise_title)
             binding.tvObMsg.text = getString(R.string.permission_promise_msg)
             binding.btnObNext.text = getString(R.string.permission_grant)
@@ -218,12 +248,30 @@ class MainActivity : AppCompatActivity() {
             .start()
     }
 
-    private fun requestPermissions() {
-        val perms = mutableListOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) perms.add(Manifest.permission.ACTIVITY_RECOGNITION)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) perms.add(Manifest.permission.POST_NOTIFICATIONS)
+    /**
+     * Builds the list of runtime permissions required for core functionality.
+     * Single source of truth — used by both requestPermissions() and settingsLauncher.
+     */
+    private fun buildRequiredPermissions(): List<String> {
+        val perms = mutableListOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            perms.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+        return perms
+    }
 
-        permissionLauncher.launch(perms.toTypedArray())
+    private fun requestPermissions() {
+        permissionLauncher.launch(buildRequiredPermissions().toTypedArray())
+    }
+
+    private fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.parse("package:$packageName")
+        }
+        settingsLauncher.launch(intent)
     }
 
     private fun requestBackgroundLocationOrFinish() {

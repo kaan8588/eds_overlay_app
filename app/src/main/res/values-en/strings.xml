@@ -49,6 +49,8 @@
     <string name="permission_grant">Got it, Allow</string>
     <string name="permission_denied_msg">Some permissions were denied. Muavin needs all permissions to work correctly.</string>
     <string name="permission_retry">Try Again</string>
+    <string name="permission_denied_permanent_msg">Permissions were permanently denied. Please enable them manually from app settings.</string>
+    <string name="permission_open_settings">Go to Settings</string>
     <string name="importing">Updating…</string>
 
     <!-- Overlay Strings -->
@@ -65,6 +67,10 @@
     <!-- Onboarding: Phone Orientation -->
     <string name="onboarding_orientation_title">Phone Orientation</string>
     <string name="onboarding_orientation_msg">Hold your phone in the same direction as the vehicle while using the app.\nThis helps Muavin guide you more accurately.</string>
+
+    <!-- Onboarding: WiFi Tip -->
+    <string name="onboarding_wifi_title">Wi-Fi Tip</string>
+    <string name="onboarding_wifi_msg">When Wi-Fi is enabled, your location and speed are detected with greater precision.\nAn internet connection is not required — keeping Wi-Fi turned on is sufficient.</string>
 
     <!-- Feedback Screen -->
     <string name="feedback_button">Feedback</string>

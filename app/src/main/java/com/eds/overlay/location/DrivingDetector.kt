@@ -45,6 +45,16 @@ class DrivingDetector(private val context: Context) {
     fun startMonitoring(listener: DrivingDetectorListener) {
         this.listener = listener
         
+        // Guard: ACTIVITY_RECOGNITION may not be declared in the manifest.
+        // If unavailable, default to DRIVING so the overlay always works.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+            context.checkSelfPermission(android.Manifest.permission.ACTIVITY_RECOGNITION)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            Log.w(TAG, "ACTIVITY_RECOGNITION not granted — defaulting to DRIVING state")
+            listener.onDrivingStateChanged(DrivingState.DRIVING)
+            return
+        }
+
         val filter = IntentFilter(ACTION_ACTIVITY)
         ContextCompat.registerReceiver(
             context, receiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED
@@ -56,6 +66,7 @@ class DrivingDetector(private val context: Context) {
                 .addOnFailureListener { e -> Log.e(TAG, "Failed to request activity updates", e) }
         } catch (e: SecurityException) {
             Log.e(TAG, "SecurityException: Missing activity recognition permission", e)
+            listener.onDrivingStateChanged(DrivingState.DRIVING)
         }
     }
 

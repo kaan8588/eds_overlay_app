@@ -49,6 +49,8 @@
     <string name="permission_grant">Anladım, İzin Ver</string>
     <string name="permission_denied_msg">Bazı izinler verilmedi. Muavin\'in düzgün çalışması için tüm izinlere ihtiyacı var.</string>
     <string name="permission_retry">Tekrar Dene</string>
+    <string name="permission_denied_permanent_msg">İzinler kalıcı olarak reddedildi. Lütfen uygulama ayarlarından izinleri manuel olarak açın.</string>
+    <string name="permission_open_settings">Ayarlara Git</string>
     <string name="importing">Güncelleniyor…</string>
 
     <!-- Overlay Strings -->
@@ -65,6 +67,10 @@
     <!-- Onboarding: Phone Orientation -->
     <string name="onboarding_orientation_title">Telefon Yönü</string>
     <string name="onboarding_orientation_msg">Kullanırken telefonunuzu araç ile aynı yönde tutunuz.\nBöylece Muavin sizi daha doğru bir şekilde yönlendirebilir.</string>
+
+    <!-- Onboarding: WiFi Tip -->
+    <string name="onboarding_wifi_title">Wi-Fi İpucu</string>
+    <string name="onboarding_wifi_msg">Wi-Fi açıkken konumunuz ve hızınız daha hassas bir şekilde algılanır.\nİnternet bağlantısı gerekmez, Wi-Fi özelliğinin açık olması yeterlidir.</string>
 
     <!-- Feedback Screen -->
     <string name="feedback_button">Geri Bildirim</string>

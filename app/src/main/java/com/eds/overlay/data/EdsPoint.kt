@@ -43,5 +43,8 @@ data class EdsPoint(
     val type: String = "EDS",
 
     /** ISO-8601 timestamp of last data update */
-    val lastUpdated: String = ""
+    val lastUpdated: String = "",
+
+    /** Human-readable description / location name of the camera */
+    val description: String = ""
 )

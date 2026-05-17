@@ -58,9 +58,12 @@
     <string name="overlay_status_warning">DİKKAT</string>
     <string name="overlay_status_safe">Güvenli</string>
     <string name="overlay_status_idle">Temiz</string>
+    <string name="overlay_limit_estimated">tahmini</string>
     <string name="overlay_label_limit">Limit: </string>
     <string name="overlay_label_distance">Mesafe: </string>
     <string name="tts_alert_danger">Dikkat! Hız sınırını aşıyorsunuz. Limit %d kilometre.</string>
+    <string name="tts_alert_warning">Dikkat! %1$s ileride radar var. Hız limiti %2$d kilometre.</string>
+    <string name="tts_alert_warning_desc">Dikkat! %1$s ileride radar var. %3$s. Hız limiti %2$d kilometre.</string>
     <string name="notification_title">EDS Gözetim Aktif</string>
     <string name="notification_text">Hız kameraları izleniyor</string>
 

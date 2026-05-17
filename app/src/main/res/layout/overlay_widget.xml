@@ -105,4 +105,18 @@
         android:textSize="13sp"
         android:textStyle="bold" />
 
+    <!-- Radar Description (shown when approaching) -->
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="2"
+        android:maxWidth="180dp"
+        android:textColor="#B0FFFFFF"
+        android:textSize="10sp"
+        android:visibility="gone" />
+
 </LinearLayout>

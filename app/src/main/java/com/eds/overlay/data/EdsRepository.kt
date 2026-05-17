@@ -80,7 +80,8 @@ class EdsRepository(private val dao: EdsDao) {
                         direction = validDirection,
                         speedLimit = validSpeed,
                         type = entry.type ?: "EDS",
-                        lastUpdated = entry.lastUpdated ?: ""
+                        lastUpdated = entry.lastUpdated ?: "",
+                        description = entry.description ?: ""
                     )
                 }
 
@@ -106,8 +107,9 @@ class EdsRepository(private val dao: EdsDao) {
      * never collide and return stale results.
      */
     suspend fun getNearbyPoints(lat: Double, lng: Double, radiusKm: Double): List<EdsPoint> {
-        // Quantize coordinates to ~100m and include radius to form a stable cache key
-        val queryKey = "%.3f,%.3f,%.1f".format(lat, lng, radiusKm)
+        // Quantize coordinates to ~11m for tight cache key — coarser keys cause
+        // stale results that miss nearby radars after short movements.
+        val queryKey = "%.4f,%.4f,%.1f".format(lat, lng, radiusKm)
 
         // Fast-path: check cache under short lock
         cacheMutex.withLock { cache.get(queryKey) }?.let { return it }
@@ -150,6 +152,7 @@ class EdsRepository(private val dao: EdsDao) {
         val direction: Double? = null,
         val speedLimit: Int? = null,
         val type: String? = null,
-        val lastUpdated: String? = null
+        val lastUpdated: String? = null,
+        val description: String? = null
     )
 }

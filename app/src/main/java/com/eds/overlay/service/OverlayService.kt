@@ -35,9 +35,9 @@ class OverlayService : Service(), LocationEngine.LocationListener,
         private const val TAG = "OverlayService"
         private const val NOTIFICATION_ID = 1001
         // Query radius is 1.5× the alert radius to leave slack at the bounding-box boundary
-        private const val ALERT_RADIUS_M = 1000.0
-        private const val QUERY_RADIUS_KM = (ALERT_RADIUS_M * 1.5) / 1000.0   // 1.5 km
-        private const val ANGLE_TOLERANCE = 25.0
+        private const val ALERT_RADIUS_M = 1200.0
+        private const val QUERY_RADIUS_KM = (ALERT_RADIUS_M * 1.5) / 1000.0   // 1.8 km
+        private const val ANGLE_TOLERANCE = 45.0
         private const val PREFS_NAME = "muavin_prefs"
         private const val KEY_LAST_ALERT_TIME = "last_alert_time"
         
@@ -126,6 +126,9 @@ class OverlayService : Service(), LocationEngine.LocationListener,
         locationEngine.startTracking()
         drivingDetector.startMonitoring(this)
         isRunning = true
+        // Bootstrap: run an immediate scan with the last known location
+        // so the overlay doesn't stay empty while waiting for the first GPS fix
+        bootstrapWithLastLocation()
         return START_STICKY
     }
 
@@ -227,20 +230,61 @@ class OverlayService : Service(), LocationEngine.LocationListener,
         overlayView = null
     }
 
+    /**
+     * Uses the last known GPS location to immediately populate the overlay
+     * with nearby radar data, avoiding the blank-overlay delay while
+     * waiting for the first fresh GPS fix (which can take 5-30s on cold start).
+     */
+    private fun bootstrapWithLastLocation() {
+        locationEngine.getLastLocation { location ->
+            if (location != null) {
+                // Feed it through the normal pipeline
+                onLocationUpdate(location)
+            }
+        }
+    }
+
     private fun updateOverlay(speedKmh: Double, threats: List<Threat>) {
         overlayView?.update(speedKmh, threats.firstOrNull())
     }
 
     private fun checkTtsAlert(nearest: Threat?) {
-        if (nearest != null && nearest.level == Threat.Level.DANGER) {
-            val now = System.currentTimeMillis()
-            if (now - lastAlertTime > alertCooldownMs) {
-                lastAlertTime = now
-                // Persist so a sticky-service restart doesn't re-alert immediately
-                getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-                    .edit().putLong(KEY_LAST_ALERT_TIME, now).apply()
-                speak(getString(R.string.tts_alert_danger, nearest.point.speedLimit))
+        if (nearest == null) return
+        // Alert on WARNING (approaching) and DANGER (speeding)
+        if (nearest.level == Threat.Level.SAFE) return
+
+        val now = System.currentTimeMillis()
+        if (now - lastAlertTime > alertCooldownMs) {
+            lastAlertTime = now
+            // Persist so a sticky-service restart doesn't re-alert immediately
+            getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+                .edit().putLong(KEY_LAST_ALERT_TIME, now).apply()
+
+            val msg = if (nearest.level == Threat.Level.DANGER) {
+                getString(R.string.tts_alert_danger, nearest.point.speedLimit)
+            } else {
+                // WARNING level — approaching radar, not yet speeding
+                buildWarningMessage(nearest)
             }
+            speak(msg)
+        }
+    }
+
+    /**
+     * Builds a TTS warning message that includes the radar description
+     * when available, so the driver knows which camera is ahead.
+     */
+    private fun buildWarningMessage(threat: Threat): String {
+        val desc = threat.point.description.trim()
+        val distText = if (threat.distanceM < 1000) {
+            "${threat.distanceM.toInt()} metre"
+        } else {
+            "${"%.1f".format(threat.distanceM / 1000)} kilometre"
+        }
+        return if (desc.isNotEmpty()) {
+            getString(R.string.tts_alert_warning_desc, distText, threat.point.speedLimit, desc)
+        } else {
+            getString(R.string.tts_alert_warning, distText, threat.point.speedLimit)
         }
     }
 

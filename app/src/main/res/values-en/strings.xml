@@ -58,9 +58,12 @@
     <string name="overlay_status_warning">CAUTION</string>
     <string name="overlay_status_safe">Safe</string>
     <string name="overlay_status_idle">Clear</string>
+    <string name="overlay_limit_estimated">estimated</string>
     <string name="overlay_label_limit">Limit: </string>
     <string name="overlay_label_distance">Dist: </string>
     <string name="tts_alert_danger">Attention! You are exceeding the speed limit. The limit is %d kilometers.</string>
+    <string name="tts_alert_warning">Caution! Speed camera ahead in %1$s. Speed limit is %2$d kilometers.</string>
+    <string name="tts_alert_warning_desc">Caution! Speed camera ahead in %1$s. %3$s. Speed limit is %2$d kilometers.</string>
     <string name="notification_title">EDS Surveillance Active</string>
     <string name="notification_text">Speed cameras are being monitored</string>
 

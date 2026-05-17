@@ -32,6 +32,7 @@ class OverlayView(
     private val tvLimit: TextView = rootView.findViewById(R.id.tv_speed_limit)
     private val tvDistance: TextView = rootView.findViewById(R.id.tv_distance)
     private val tvStatus: TextView = rootView.findViewById(R.id.tv_status)
+    private val tvDescription: TextView = rootView.findViewById(R.id.tv_description)
     private val ivIcon: ImageView = rootView.findViewById(R.id.iv_alert_icon)
 
     private var blinkAnimator: ObjectAnimator? = null
@@ -50,18 +51,27 @@ class OverlayView(
 
         if (nearest != null) {
             tvLimit.text = if (nearest.point.speedLimit > 0)
-                "${nearest.point.speedLimit}" else "--"
+                "${nearest.point.speedLimit} (${context.getString(R.string.overlay_limit_estimated)})" else "--"
             tvDistance.text = formatDistance(nearest.distanceM)
             tvStatus.text = when (nearest.level) {
                 Threat.Level.DANGER -> context.getString(R.string.overlay_status_danger)
                 Threat.Level.WARNING -> context.getString(R.string.overlay_status_warning)
                 Threat.Level.SAFE -> context.getString(R.string.overlay_status_safe)
             }
+            // Show radar description (truncated for overlay space)
+            val desc = nearest.point.description.trim()
+            if (desc.isNotEmpty()) {
+                tvDescription.text = truncateDescription(desc)
+                tvDescription.visibility = View.VISIBLE
+            } else {
+                tvDescription.visibility = View.GONE
+            }
             setLevel(nearest.level)
         } else {
             tvLimit.text = "--"
             tvDistance.text = "--"
             tvStatus.text = context.getString(R.string.overlay_status_idle)
+            tvDescription.visibility = View.GONE
             setLevel(Threat.Level.SAFE)
         }
     }
@@ -151,5 +161,21 @@ class OverlayView(
     private fun formatDistance(meters: Double): String = when {
         meters < 1000 -> "${meters.roundToInt()}m"
         else -> "${"%.1f".format(meters / 1000)}km"
+    }
+
+    /**
+     * Extracts a short, meaningful location name from the raw radar description.
+     * Input format: "12017 / Kennedy Cad. Ahırkapı FATİH  Kennedy Cad.-Sirkeci istikametine"
+     * Output: "Kennedy Cad. Ahırkapı FATİH"  (the part between "/" and the double-space)
+     */
+    private fun truncateDescription(raw: String): String {
+        // Try to extract the location part after "/ "
+        val afterSlash = raw.substringAfter("/ ", raw).trim()
+        // Take only the part before the first "istikameti" or double-space (direction info)
+        val meaningful = afterSlash
+            .split("  ").firstOrNull()?.trim()
+            ?: afterSlash
+        // Truncate to keep the overlay compact
+        return if (meaningful.length > 36) meaningful.take(34) + "…" else meaningful
     }
 }

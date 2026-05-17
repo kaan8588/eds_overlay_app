@@ -178,7 +178,7 @@ object SpatialEngine {
                 // ── Directional filtering ───────────────────────────────
                 // If the user is stationary or moving very slowly, GPS bearing is unreliable.
                 // In this case, we skip directional filtering and just show the nearest radar.
-                val isMoving = userSpeedKmh >= 5.0
+                val isMoving = userSpeedKmh >= 15.0
 
                 if (point.direction >= 0) {
                     // Known camera direction:

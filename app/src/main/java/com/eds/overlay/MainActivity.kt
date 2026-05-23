@@ -33,12 +33,14 @@ class MainActivity : AppCompatActivity() {
         private const val KEY_DATA_IMPORTED = "data_imported"
         private const val KEY_LANG = "app_lang"
         private const val KEY_DARK_MODE = "dark_mode"
+        private const val KEY_SOUND_ENABLED = "sound_enabled"
         private const val QUOTE_DELAY = 60_000L // 60 seconds
     }
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var repository: EdsRepository
     private var isServiceRunning = false
+    private var isSoundEnabled = true
 
     private var quoteJob: Job? = null
     private var onboardingStep = 1
@@ -148,9 +150,11 @@ class MainActivity : AppCompatActivity() {
 
         // Load theme preference and apply
         isDarkMode = prefs.getBoolean(KEY_DARK_MODE, false)
+        isSoundEnabled = prefs.getBoolean(KEY_SOUND_ENABLED, true)
         applyThemeColors()
 
         updateUI()
+        updateSoundUI()
         loadPointCount()
         startQuoteTimer()
         checkFirstLaunch()
@@ -161,6 +165,7 @@ class MainActivity : AppCompatActivity() {
         binding.btnImport.setOnClickListener { importData() }
         binding.btnLanguage.setOnClickListener { switchLanguage() }
         binding.btnTheme.setOnClickListener { toggleTheme() }
+        binding.btnSound.setOnClickListener { toggleSound() }
         binding.btnFeedback.setOnClickListener {
             startActivity(Intent(this, FeedbackActivity::class.java))
         }
@@ -388,7 +393,9 @@ class MainActivity : AppCompatActivity() {
     private fun switchLanguage() {
         val currentLang = prefs.getString(KEY_LANG, "tr")
         val newLang = if (currentLang == "tr") "en" else "tr"
-        prefs.edit().putString(KEY_LANG, newLang).apply()
+        // commit() is synchronous — guarantees the new locale is persisted
+        // before the recreated activity reads it in attachBaseContext.
+        prefs.edit().putString(KEY_LANG, newLang).commit()
 
         if (isServiceRunning) {
             OverlayService.stop(this)
@@ -399,6 +406,17 @@ class MainActivity : AppCompatActivity() {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         finish()
+    }
+
+    private fun toggleSound() {
+        isSoundEnabled = !isSoundEnabled
+        prefs.edit().putBoolean(KEY_SOUND_ENABLED, isSoundEnabled).apply()
+        updateSoundUI()
+    }
+
+    private fun updateSoundUI() {
+        binding.btnSound.text = if (isSoundEnabled)
+            getString(R.string.sound_on) else getString(R.string.sound_off)
     }
 
     private fun toggleTheme() {
@@ -487,6 +505,9 @@ class MainActivity : AppCompatActivity() {
 
         // Status card label
         binding.tvStatusLabel.setTextColor(dimTextColor)
+
+        // Settings row
+        binding.btnSound.setTextColor(buttonTextColor)
 
         // Onboarding colors
         binding.layoutOnboarding.setBackgroundColor(onboardingBgColor)

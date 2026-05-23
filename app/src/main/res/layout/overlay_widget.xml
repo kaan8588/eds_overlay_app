@@ -25,7 +25,7 @@
         android:layout_marginTop="4dp"
         android:text="0"
         android:textColor="#FFFFFF"
-        android:textSize="36sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:fontFamily="sans-serif-condensed" />
 
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:text="@string/overlay_unit_kmh"
         android:textColor="#B0FFFFFF"
-        android:textSize="11sp" />
+        android:textSize="10sp" />
 
     <!-- Divider -->
     <View
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:text="@string/overlay_label_limit"
             android:textColor="#B0FFFFFF"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/tv_speed_limit"
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:text="--"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:text="@string/overlay_label_distance"
             android:textColor="#B0FFFFFF"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/tv_distance"
@@ -90,7 +90,7 @@
             android:layout_height="wrap_content"
             android:text="--"
             android:textColor="#FFFFFF"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -102,7 +102,7 @@
         android:layout_marginTop="6dp"
         android:text="@string/overlay_status_idle"
         android:textColor="#FFFFFF"
-        android:textSize="13sp"
+        android:textSize="12sp"
         android:textStyle="bold" />
 
     <!-- Radar Description (shown when approaching) -->

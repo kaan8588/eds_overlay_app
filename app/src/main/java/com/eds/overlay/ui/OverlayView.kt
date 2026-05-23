@@ -3,6 +3,10 @@ package com.eds.overlay.ui
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
@@ -50,8 +54,24 @@ class OverlayView(
         tvSpeed.text = "${speedKmh.roundToInt()}"
 
         if (nearest != null) {
-            tvLimit.text = if (nearest.point.speedLimit > 0)
-                "${nearest.point.speedLimit} (${context.getString(R.string.overlay_limit_estimated)})" else "--"
+            if (nearest.point.speedLimit > 0) {
+                val limitStr = "${nearest.point.speedLimit}"
+                val estStr = " (${context.getString(R.string.overlay_limit_estimated)})"
+                val spannable = SpannableString(limitStr + estStr)
+                spannable.setSpan(
+                    ForegroundColorSpan(0x60FFFFFF.toInt()),
+                    limitStr.length, spannable.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                spannable.setSpan(
+                    RelativeSizeSpan(0.7f),
+                    limitStr.length, spannable.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                tvLimit.text = spannable
+            } else {
+                tvLimit.text = "--"
+            }
             tvDistance.text = formatDistance(nearest.distanceM)
             tvStatus.text = when (nearest.level) {
                 Threat.Level.DANGER -> context.getString(R.string.overlay_status_danger)

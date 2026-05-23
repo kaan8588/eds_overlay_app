@@ -35,6 +35,14 @@ object SpatialEngine {
      */
     private const val FORWARD_CONE_DEG = 75.0
 
+    /**
+     * Camera detection-cone half-angle (degrees).
+     * For cameras with a known orientation, the detection zone is a cone
+     * extending in the *approach* direction (opposite of camera.direction).
+     * 60° is wide enough to cover multi-lane roads and gentle curves.
+     */
+    private const val CAMERA_CONE_HALF_DEG = 60.0
+
     // ── Distance ────────────────────────────────────────────────────
 
     /**
@@ -116,9 +124,15 @@ object SpatialEngine {
         val relAngle = bearingDifference(userBearing, bearingToTarget)
 
         if (point.direction >= 0) {
-            // Known camera direction: user heading must match camera orientation
-            return bearingDifference(userBearing, point.direction) <= angleTolerance
-                    && relAngle <= FORWARD_CONE_DEG
+            // Known camera direction → check if user is inside the camera's
+            // detection cone. The cone extends opposite to camera.direction
+            // (the approach zone where vehicles drive towards the camera).
+            val approachDir = (point.direction + 180.0) % 360.0
+            val bearingCamToUser = (bearingToTarget + 180.0) % 360.0
+            val coneAngle = bearingDifference(bearingCamToUser, approachDir)
+            if (coneAngle > CAMERA_CONE_HALF_DEG) return false
+            // Also ensure camera is ahead of user
+            return relAngle <= FORWARD_CONE_DEG
         }
 
         // Unknown direction: camera must be ahead of user
@@ -181,12 +195,16 @@ object SpatialEngine {
                 val isMoving = userSpeedKmh >= 15.0
 
                 if (point.direction >= 0) {
-                    // Known camera direction:
-                    //  a) User heading must roughly match camera orientation
-                    //  b) Camera must be ahead (not behind)
+                    // Known camera direction → detection cone check.
+                    // The cone extends from the camera in the approach direction
+                    // (opposite of camera.direction). If the user is inside
+                    // this cone, the camera can see them.
                     if (isMoving) {
-                        val cameraBearingDiff = bearingDifference(userBearing, point.direction)
-                        if (cameraBearingDiff > angleTolerance) return@mapNotNull null
+                        val approachDir = (point.direction + 180.0) % 360.0
+                        val bearingCamToUser = (bearingToTarget + 180.0) % 360.0
+                        val coneAngle = bearingDifference(bearingCamToUser, approachDir)
+                        if (coneAngle > CAMERA_CONE_HALF_DEG) return@mapNotNull null
+                        // Camera must also be ahead of the user
                         if (relativeAngleToTarget > FORWARD_CONE_DEG) return@mapNotNull null
                     }
                 } else {

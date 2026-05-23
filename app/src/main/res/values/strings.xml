@@ -113,6 +113,10 @@
     <string name="feedback_email_subject">Muavin Geri Bildirim: %1$s</string>
     <string name="feedback_email_subject_default">Muavin Geri Bildirim</string>
 
+    <!-- Sound -->
+    <string name="sound_on">Ses Açık</string>
+    <string name="sound_off">Ses Kapalı</string>
+
     <!-- Overlay unit -->
     <string name="overlay_unit_kmh" translatable="false">km/h</string>
 

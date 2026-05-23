@@ -113,6 +113,9 @@
     <string name="feedback_email_subject">Muavin Feedback: %1$s</string>
     <string name="feedback_email_subject_default">Muavin Feedback</string>
 
+    <!-- Sound -->
+    <string name="sound_on">Sound On</string>
+    <string name="sound_off">Sound Off</string>
     <!-- Background Location -->
     <string name="permission_background_msg">For Muavin to alert you while running in the background, please set location permission to "Allow all the time".</string>
 </resources>

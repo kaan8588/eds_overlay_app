@@ -40,15 +40,13 @@ class OverlayService : Service(), LocationEngine.LocationListener,
         private const val ANGLE_TOLERANCE = 45.0
         private const val PREFS_NAME = "muavin_prefs"
         private const val KEY_LAST_ALERT_TIME = "last_alert_time"
+        private const val KEY_SOUND_ENABLED = "sound_enabled"
         
         // Speed noise threshold in km/h. Speeds below this are treated as zero.
         private const val SPEED_NOISE_THRESHOLD_KMH = 5.0
         // Maximum acceptable GPS accuracy in meters. Fixes worse than this are
         // considered unreliable and their speed is treated as zero.
         private const val MAX_ACCURACY_M = 50f
-        // Maximum credible speed jump between consecutive fixes (km/h).
-        // Anything larger is treated as a GPS glitch (e.g. 0 → 150 while parked).
-        private const val MAX_SPEED_JUMP_KMH = 40.0
 
         /** Accessible flag for UI to check service liveness without deprecated APIs. */
         @Volatile
@@ -76,8 +74,6 @@ class OverlayService : Service(), LocationEngine.LocationListener,
 
     private var overlayView: OverlayView? = null
     private var tts: TextToSpeech? = null
-    // Tracks the last accepted speed so we can detect impossible jumps
-    private var lastSpeedKmh: Double = 0.0
     private var ttsReady = false
     private var isDriving = true
 
@@ -86,6 +82,8 @@ class OverlayService : Service(), LocationEngine.LocationListener,
     // service doesn't immediately re-alert the user after a brief interruption.
     private var lastAlertTime: Long = 0L
     private val alertCooldownMs = 10_000L
+    // Tracks which radar point was last alerted so DİKKAT fires only once per radar
+    private var lastAlertedPointId: Long = -1L
 
     private var computationJob: Job? = null
 
@@ -112,10 +110,6 @@ class OverlayService : Service(), LocationEngine.LocationListener,
         // Restore persisted cooldown timestamp so the service survives OS restarts
         lastAlertTime = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
             .getLong(KEY_LAST_ALERT_TIME, 0L)
-
-        // Reset speed state so stale values from a previous session
-        // don't cause the spike filter to reject the first real reading
-        lastSpeedKmh = 0.0
 
         initTts()
     }
@@ -158,13 +152,12 @@ class OverlayService : Service(), LocationEngine.LocationListener,
                 val rawSpeedKmh = if (location.hasSpeed()) location.speed * 3.6 else 0.0
                 // 2. Reject fixes with poor accuracy (likely indoor / cold-start)
                 val accuracyOk = !location.hasAccuracy() || location.accuracy < MAX_ACCURACY_M
-                // 3. Spike filter: reject impossible jumps (e.g. 0→150 while parked)
-                val spikeFiltered = if (rawSpeedKmh > lastSpeedKmh + MAX_SPEED_JUMP_KMH)
-                    lastSpeedKmh else rawSpeedKmh
-                // 4. Noise gate: treat very low speeds as zero
-                val speedKmh = if (!accuracyOk || spikeFiltered < SPEED_NOISE_THRESHOLD_KMH)
-                    0.0 else spikeFiltered
-                lastSpeedKmh = speedKmh
+                // 3. Noise gate: treat very low speeds as zero
+                //    (spike filter removed — FusedLocationProvider already
+                //    applies Kalman filtering; our old spike filter caused
+                //    speed to stick at 0 after brief GPS dropouts)
+                val speedKmh = if (!accuracyOk || rawSpeedKmh < SPEED_NOISE_THRESHOLD_KMH)
+                    0.0 else rawSpeedKmh
 
                 val (currentSpeed, threats) = withContext(Dispatchers.Default) {
                     val candidates = repository.getNearbyPoints(lat, lng, QUERY_RADIUS_KM)
@@ -249,13 +242,28 @@ class OverlayService : Service(), LocationEngine.LocationListener,
     }
 
     private fun checkTtsAlert(nearest: Threat?) {
-        if (nearest == null) return
+        if (nearest == null) {
+            // No threat → reset per-point tracking so re-entry triggers a fresh alert
+            lastAlertedPointId = -1L
+            return
+        }
         // Alert on WARNING (approaching) and DANGER (speeding)
         if (nearest.level == Threat.Level.SAFE) return
+        // Only alert within 500m — beyond that, visual feedback (blink) is enough
+        if (nearest.distanceM >= 500) return
+
+        // Sound toggle: respect user preference
+        val soundEnabled = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+            .getBoolean(KEY_SOUND_ENABLED, true)
+        if (!soundEnabled) return
+
+        // One-shot per radar point: don't repeat for the same camera
+        if (nearest.point.id == lastAlertedPointId) return
 
         val now = System.currentTimeMillis()
         if (now - lastAlertTime > alertCooldownMs) {
             lastAlertTime = now
+            lastAlertedPointId = nearest.point.id
             // Persist so a sticky-service restart doesn't re-alert immediately
             getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
                 .edit().putLong(KEY_LAST_ALERT_TIME, now).apply()

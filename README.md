@@ -65,6 +65,7 @@ This application **strictly does not aim to encourage violation of traffic rules
 
 > [!IMPORTANT]
 > If you have any copyright, data use, or security concerns regarding the project, please contact me or my academic advisor.
+> **Note:** Due to privacy principles, the full EDS data has been removed from this repository. Only a mock `eds_data.json` file with 2 examples is shared for demonstration purposes.
 
 ---
 
@@ -147,6 +148,7 @@ Bu uygulama, **kesinlikle trafik kurallarını ihlal etmeye teşvik amacı gütm
 
 > [!IMPORTANT]
 > Proje ile ilgili herhangi bir telif hakkı, veri kullanımı veya güvenlik endişesi durumunda lütfen akademik danışmanım veya şahsım ile iletişime geçiniz.
+> **Not:** Gizlilik prensipleri gereğince, tam EDS verileri bu depodan silinmiştir. Yalnızca 2 örnek içeren mock bir `eds_data.json` dosyası gösterim amacıyla paylaşılmıştır.
 
 ---
 

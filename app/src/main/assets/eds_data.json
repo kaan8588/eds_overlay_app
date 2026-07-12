@@ -1,0 +1,20 @@
+[
+  {
+    "lat": 41.16418,
+    "lng": 28.189972,
+    "direction": -1.0,
+    "speedLimit": 70,
+    "type": "EDS",
+    "lastUpdated": "2026-05-19",
+    "description": "31019 / Laiklik Cad. Büyükkılıçlı SİLİVRİ Büyükkılıçlı-D100 istikameti"
+  },
+  {
+    "lat": 41.00399,
+    "lng": 28.982493,
+    "direction": -1.0,
+    "speedLimit": 70,
+    "type": "EDS",
+    "lastUpdated": "2026-05-19",
+    "description": "12017 / Kennedy Cad. Ahırkapı FATİH  Kennedy Cad.-Sirkeci istikametine"
+  }
+]

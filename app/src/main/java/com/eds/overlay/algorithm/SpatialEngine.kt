@@ -43,6 +43,13 @@ object SpatialEngine {
      */
     private const val CAMERA_CONE_HALF_DEG = 60.0
 
+    /**
+     * Minimum speed (km/h) at which GPS bearing is considered reliable.
+     * Below this, directional filtering is skipped entirely — a stationary
+     * or crawling user gets distance-only results.
+     */
+    private const val MIN_SPEED_FOR_BEARING_KMH = 15.0
+
     // ── Distance ────────────────────────────────────────────────────
 
     /**
@@ -103,18 +110,18 @@ object SpatialEngine {
      *
      * Conditions:
      *  1. User is within [radiusM] meters of the camera.
-     *  2. If camera orientation is known: user's heading aligns with
-     *     the camera's orientation within [angleTolerance] degrees.
-     *  3. If camera orientation is unknown: the camera must lie within
-     *     [FORWARD_CONE_DEG]° of the user's travel direction (i.e. ahead).
+     *  2. The camera lies within [FORWARD_CONE_DEG]° of the user's
+     *     travel direction (i.e. ahead of the user).
+     *  3. If camera orientation is known: the user must additionally be
+     *     inside the camera's detection cone ([CAMERA_CONE_HALF_DEG]°
+     *     around the approach direction).
      */
     fun isApproaching(
         userLat: Double,
         userLng: Double,
         userBearing: Double,
         point: EdsPoint,
-        radiusM: Double = 1200.0,
-        angleTolerance: Double = 45.0
+        radiusM: Double = 1200.0
     ): Boolean {
         val distance = haversineDistance(userLat, userLng, point.latitude, point.longitude)
         if (distance > radiusM) return false
@@ -144,11 +151,11 @@ object SpatialEngine {
      *
      * @param userLat       user latitude
      * @param userLng       user longitude
-     * @param userBearing   user heading in degrees (from GPS)
+     * @param userBearing   user heading in degrees [0, 360), or a negative
+     *                      value if the GPS fix carries no bearing
      * @param userSpeedKmh  user speed in km/h
      * @param candidates    pre-filtered EDS points (from bounding-box query)
      * @param radiusM       alert radius in meters
-     * @param angleTolerance directional tolerance in degrees
      *
      * @return list of [Threat] objects sorted by distance (nearest first)
      */
@@ -158,13 +165,18 @@ object SpatialEngine {
         userBearing: Double,
         userSpeedKmh: Double,
         candidates: List<EdsPoint>,
-        radiusM: Double = 1200.0,
-        angleTolerance: Double = 45.0
+        radiusM: Double = 1200.0
     ): List<Threat> {
         // Pre-compute user trig values (reused for every candidate)
         val rUserLat = userLat.toRadians()
         val cosUserLat = cos(rUserLat)
         val sinUserLat = sin(rUserLat)
+
+        // Directional filtering requires a trustworthy heading: the user must
+        // be moving fast enough for GPS bearing to stabilize AND the fix must
+        // actually carry a bearing (negative = sentinel for "no bearing").
+        val useDirectionalFilter =
+            userSpeedKmh >= MIN_SPEED_FOR_BEARING_KMH && userBearing >= 0.0
 
         return candidates
             .mapNotNull { point ->
@@ -187,33 +199,26 @@ object SpatialEngine {
                         sinUserLat * cosPointLat * cos(dLng)
                 val bearingToTarget = (atan2(x, y) * (180.0 / PI) + 360) % 360
 
-                val relativeAngleToTarget = bearingDifference(userBearing, bearingToTarget)
-
                 // ── Directional filtering ───────────────────────────────
-                // If the user is stationary or moving very slowly, GPS bearing is unreliable.
-                // In this case, we skip directional filtering and just show the nearest radar.
-                val isMoving = userSpeedKmh >= 15.0
+                // Skipped entirely when the heading is unreliable (slow speed
+                // or missing bearing) — distance-only results in that case.
+                if (useDirectionalFilter) {
+                    val relativeAngleToTarget = bearingDifference(userBearing, bearingToTarget)
 
-                if (point.direction >= 0) {
-                    // Known camera direction → detection cone check.
-                    // The cone extends from the camera in the approach direction
-                    // (opposite of camera.direction). If the user is inside
-                    // this cone, the camera can see them.
-                    if (isMoving) {
+                    // Forward cone: camera must lie ahead of the user.
+                    // Eliminates cameras behind, on parallel roads, or on
+                    // the opposite lane.
+                    if (relativeAngleToTarget > FORWARD_CONE_DEG) return@mapNotNull null
+
+                    if (point.direction >= 0) {
+                        // Known camera direction → detection cone check.
+                        // The cone extends from the camera in the approach
+                        // direction (opposite of camera.direction). If the
+                        // user is inside this cone, the camera can see them.
                         val approachDir = (point.direction + 180.0) % 360.0
                         val bearingCamToUser = (bearingToTarget + 180.0) % 360.0
                         val coneAngle = bearingDifference(bearingCamToUser, approachDir)
                         if (coneAngle > CAMERA_CONE_HALF_DEG) return@mapNotNull null
-                        // Camera must also be ahead of the user
-                        if (relativeAngleToTarget > FORWARD_CONE_DEG) return@mapNotNull null
-                    }
-                } else {
-                    // Unknown direction: camera must lie within forward cone.
-                    // This is the ONLY directional check — it eliminates
-                    // cameras behind the user, on parallel roads, or on
-                    // the opposite lane.
-                    if (isMoving) {
-                        if (relativeAngleToTarget > FORWARD_CONE_DEG) return@mapNotNull null
                     }
                 }
 

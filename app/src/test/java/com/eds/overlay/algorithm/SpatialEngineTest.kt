@@ -92,6 +92,25 @@ class SpatialEngineTest {
 
     @Test
     fun `isApproaching - user heading toward camera within range`() {
+        // Camera is ~111m SOUTH of the user; user heads south (180°);
+        // camera monitors southbound traffic (direction = 180).
+        val camera = EdsPoint(
+            latitude = 41.007, longitude = 28.978,
+            direction = 180.0, speedLimit = 50
+        )
+        val result = SpatialEngine.isApproaching(
+            userLat = 41.008, userLng = 28.978,
+            userBearing = 180.0,
+            point = camera,
+            radiusM = 500.0
+        )
+        assertTrue("Should detect approaching camera", result)
+    }
+
+    @Test
+    fun `isApproaching - camera behind user is rejected`() {
+        // Camera is ~111m NORTH of the user, but the user heads south —
+        // the camera is behind and must be filtered by the forward cone.
         val camera = EdsPoint(
             latitude = 41.009, longitude = 28.978,
             direction = 180.0, speedLimit = 50
@@ -102,7 +121,7 @@ class SpatialEngineTest {
             point = camera,
             radiusM = 500.0
         )
-        assertTrue("Should detect approaching camera", result)
+        assertFalse("Camera behind the user should NOT be detected", result)
     }
 
     @Test
@@ -136,7 +155,9 @@ class SpatialEngineTest {
     }
 
     @Test
-    fun `isApproaching - unknown camera direction always passes bearing check`() {
+    fun `isApproaching - unknown camera direction passes when camera is ahead`() {
+        // Camera is directly south of the user; user heads south →
+        // camera lies in the forward cone, so unknown direction passes.
         val camera = EdsPoint(
             latitude = 41.0082, longitude = 28.9784,
             direction = -1.0,    // unknown
@@ -144,11 +165,11 @@ class SpatialEngineTest {
         )
         val result = SpatialEngine.isApproaching(
             userLat = 41.0083, userLng = 28.9784,
-            userBearing = 45.0,
+            userBearing = 180.0,
             point = camera,
             radiusM = 500.0
         )
-        assertTrue("Unknown direction should pass bearing check", result)
+        assertTrue("Unknown direction should pass when camera is ahead", result)
     }
 
     // ────────────────────────────────────────────────────────────────
@@ -157,11 +178,14 @@ class SpatialEngineTest {
 
     @Test
     fun `findThreats - filters and sorts correctly`() {
+        // User heads south (180°), so "ahead" means smaller latitude.
         val cameras = listOf(
-            // Close, same direction → should match
-            EdsPoint(latitude = 41.0083, longitude = 28.978, direction = 180.0, speedLimit = 50),
-            // Close, opposite direction → should NOT match
-            EdsPoint(latitude = 41.0084, longitude = 28.978, direction = 0.0, speedLimit = 50),
+            // Ahead, monitoring southbound traffic → should match
+            EdsPoint(latitude = 41.0077, longitude = 28.978, direction = 180.0, speedLimit = 50),
+            // Ahead, but monitoring the opposite (northbound) lane → should NOT match
+            EdsPoint(latitude = 41.0076, longitude = 28.978, direction = 0.0, speedLimit = 50),
+            // Behind the user → should NOT match
+            EdsPoint(latitude = 41.0084, longitude = 28.978, direction = 180.0, speedLimit = 50),
             // Far away → should NOT match
             EdsPoint(latitude = 42.0, longitude = 29.0, direction = 180.0, speedLimit = 50),
         )
@@ -177,6 +201,44 @@ class SpatialEngineTest {
         assertEquals("Only 1 camera should match", 1, threats.size)
         assertTrue("Should be over speed", threats[0].isOverSpeed)
         assertEquals(Threat.Level.DANGER, threats[0].level)
+    }
+
+    @Test
+    fun `findThreats - stationary user gets distance-only results`() {
+        // Below 15 km/h the GPS bearing is unreliable → directional
+        // filtering must be skipped and even a camera "behind" is reported.
+        val cameras = listOf(
+            EdsPoint(latitude = 41.0084, longitude = 28.978, direction = 180.0, speedLimit = 50)
+        )
+
+        val threats = SpatialEngine.findThreats(
+            userLat = 41.008, userLng = 28.978,
+            userBearing = 180.0,
+            userSpeedKmh = 5.0,
+            candidates = cameras,
+            radiusM = 1000.0
+        )
+
+        assertEquals("Stationary user should still see nearby radar", 1, threats.size)
+    }
+
+    @Test
+    fun `findThreats - missing bearing skips directional filtering`() {
+        // Negative bearing = sentinel for "GPS fix carries no bearing".
+        // Directional filtering must be skipped even at driving speed.
+        val cameras = listOf(
+            EdsPoint(latitude = 41.0084, longitude = 28.978, direction = 180.0, speedLimit = 50)
+        )
+
+        val threats = SpatialEngine.findThreats(
+            userLat = 41.008, userLng = 28.978,
+            userBearing = -1.0,
+            userSpeedKmh = 60.0,
+            candidates = cameras,
+            radiusM = 1000.0
+        )
+
+        assertEquals("Missing bearing should not filter out radars", 1, threats.size)
     }
 
     @Test
@@ -197,8 +259,9 @@ class SpatialEngineTest {
 
     @Test
     fun `findThreats - under speed limit returns SAFE or WARNING level`() {
+        // Camera ahead of the southbound user, monitoring southbound traffic
         val cameras = listOf(
-            EdsPoint(latitude = 41.0083, longitude = 28.978, direction = 180.0, speedLimit = 100)
+            EdsPoint(latitude = 41.0077, longitude = 28.978, direction = 180.0, speedLimit = 100)
         )
 
         val threats = SpatialEngine.findThreats(

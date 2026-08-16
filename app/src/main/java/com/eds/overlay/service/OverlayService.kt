@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.graphics.PixelFormat
 import android.location.Location
 import android.os.Build
@@ -25,8 +24,8 @@ import com.eds.overlay.data.EdsRepository
 import com.eds.overlay.location.DrivingDetector
 import com.eds.overlay.location.LocationEngine
 import com.eds.overlay.ui.OverlayView
+import com.eds.overlay.util.LocaleHelper
 import kotlinx.coroutines.*
-import java.util.Locale
 
 class OverlayService : Service(), LocationEngine.LocationListener,
     DrivingDetector.DrivingDetectorListener {
@@ -37,8 +36,7 @@ class OverlayService : Service(), LocationEngine.LocationListener,
         // Query radius is 1.5× the alert radius to leave slack at the bounding-box boundary
         private const val ALERT_RADIUS_M = 1200.0
         private const val QUERY_RADIUS_KM = (ALERT_RADIUS_M * 1.5) / 1000.0   // 1.8 km
-        private const val ANGLE_TOLERANCE = 45.0
-        private const val PREFS_NAME = "muavin_prefs"
+        private const val PREFS_NAME = LocaleHelper.PREFS_NAME
         private const val KEY_LAST_ALERT_TIME = "last_alert_time"
         private const val KEY_SOUND_ENABLED = "sound_enabled"
         
@@ -87,15 +85,10 @@ class OverlayService : Service(), LocationEngine.LocationListener,
 
     private var computationJob: Job? = null
 
-    // Apply locale override for the service context
+    // Apply locale override for the service context — AppCompat's per-app
+    // locale API only covers activities on Android 12 and below.
     override fun attachBaseContext(newBase: Context) {
-        val prefs = newBase.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val lang = prefs.getString("app_lang", "tr") ?: "tr"
-        val locale = Locale.forLanguageTag(lang)
-        Locale.setDefault(locale)
-        val config = Configuration(newBase.resources.configuration)
-        config.setLocale(locale)
-        super.attachBaseContext(newBase.createConfigurationContext(config))
+        super.attachBaseContext(LocaleHelper.wrapContext(newBase))
     }
 
     override fun onCreate() {
@@ -145,7 +138,11 @@ class OverlayService : Service(), LocationEngine.LocationListener,
             try {
                 val lat = location.latitude
                 val lng = location.longitude
-                val bearing = location.bearing.toDouble()
+                // Location.bearing defaults to 0.0 (due north) when the fix
+                // carries no bearing — pass a negative sentinel instead so the
+                // engine skips directional filtering rather than filtering
+                // against a bogus northward heading.
+                val bearing = if (location.hasBearing()) location.bearing.toDouble() else -1.0
                 
                 // ── GPS speed filtering pipeline ──────────────────────────
                 // 1. Guard: only use speed if the fix actually carries one
@@ -164,7 +161,7 @@ class OverlayService : Service(), LocationEngine.LocationListener,
                     val detectedThreats = SpatialEngine.findThreats(
                         userLat = lat, userLng = lng, userBearing = bearing,
                         userSpeedKmh = speedKmh, candidates = candidates,
-                        radiusM = ALERT_RADIUS_M, angleTolerance = ANGLE_TOLERANCE
+                        radiusM = ALERT_RADIUS_M
                     )
                     speedKmh to detectedThreats
                 }

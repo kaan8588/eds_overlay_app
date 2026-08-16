@@ -1,10 +1,8 @@
 package com.eds.overlay
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.content.res.Configuration
 import android.net.Uri
 import android.content.pm.PackageManager
 import android.os.Build
@@ -21,20 +19,22 @@ import androidx.lifecycle.lifecycleScope
 import com.eds.overlay.data.EdsRepository
 import com.eds.overlay.databinding.ActivityMainBinding
 import com.eds.overlay.service.OverlayService
+import com.eds.overlay.util.LocaleHelper
 import kotlinx.coroutines.*
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        private const val PREFS_NAME = "muavin_prefs"
+        private const val PREFS_NAME = LocaleHelper.PREFS_NAME
         private const val KEY_FIRST_LAUNCH = "is_first_launch"
         private const val KEY_SERVICE_RUNNING = "service_running"
         private const val KEY_DATA_IMPORTED = "data_imported"
-        private const val KEY_LANG = "app_lang"
         private const val KEY_DARK_MODE = "dark_mode"
         private const val KEY_SOUND_ENABLED = "sound_enabled"
         private const val QUOTE_DELAY = 60_000L // 60 seconds
+
+        /** Last onboarding page; tapping the button here requests permissions. */
+        private const val LAST_ONBOARDING_STEP = 4
     }
 
     private lateinit var binding: ActivityMainBinding
@@ -107,19 +107,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun attachBaseContext(newBase: Context) {
-        val prefs = newBase.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val lang = prefs.getString(KEY_LANG, "tr") ?: "tr"
-        val locale = Locale.forLanguageTag(lang)
-        Locale.setDefault(locale)
-        val config = Configuration(newBase.resources.configuration)
-        config.setLocale(locale)
-        super.attachBaseContext(newBase.createConfigurationContext(config))
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
+        // Hand the stored language to AppCompat if it doesn't know it yet.
+        // No-op once the two agree, so this can't loop on re-creation.
+        LocaleHelper.syncWithStoredLanguage(this)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -194,11 +189,14 @@ class MainActivity : AppCompatActivity() {
 
         updateOnboardingUI()
 
+        // Advance until the last page, then request permissions. The step is
+        // never incremented past the last page, so repeated taps keep working
+        // instead of leaving the button dead.
         binding.btnObNext.setOnClickListener {
-            onboardingStep++
-            if (onboardingStep <= 4) {
+            if (onboardingStep < LAST_ONBOARDING_STEP) {
+                onboardingStep++
                 animateTransition { updateOnboardingUI() }
-            } else if (onboardingStep == 5) {
+            } else {
                 requestPermissions()
             }
         }
@@ -390,22 +388,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Toggles between Turkish and English. AppCompat persists the choice and
+     * re-creates this activity itself, so no manual restart is needed — the
+     * service is bounced separately because it holds its own locale context.
+     */
     private fun switchLanguage() {
-        val currentLang = prefs.getString(KEY_LANG, "tr")
-        val newLang = if (currentLang == "tr") "en" else "tr"
-        // commit() is synchronous — guarantees the new locale is persisted
-        // before the recreated activity reads it in attachBaseContext.
-        prefs.edit().putString(KEY_LANG, newLang).commit()
+        val newLang = LocaleHelper.oppositeLanguage(LocaleHelper.storedLanguage(this))
+        LocaleHelper.setLanguage(this, newLang)
 
         if (isServiceRunning) {
             OverlayService.stop(this)
             OverlayService.start(this)
         }
-
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
-        finish()
     }
 
     private fun toggleSound() {
@@ -439,7 +434,6 @@ class MainActivity : AppCompatActivity() {
         val dimTextColor: Int
         val fadedTextColor: Int
         val ultraFadedTextColor: Int
-        val statusBarColor: Int
         val buttonTextColor: Int
         val onboardingBgColor: Int
         val glowAlpha: Float
@@ -450,7 +444,6 @@ class MainActivity : AppCompatActivity() {
             dimTextColor = 0x80FFFFFF.toInt()
             fadedTextColor = 0x4DFFFFFF.toInt()
             ultraFadedTextColor = 0x20FFFFFF.toInt()
-            statusBarColor = 0xFF161616.toInt()
             buttonTextColor = 0x4DFFFFFF.toInt()
             onboardingBgColor = 0xF2121212.toInt()
             glowAlpha = 0.8f
@@ -460,7 +453,6 @@ class MainActivity : AppCompatActivity() {
             dimTextColor = 0x801A1A1A.toInt()
             fadedTextColor = 0x4D1A1A1A.toInt()
             ultraFadedTextColor = 0x201A1A1A.toInt()
-            statusBarColor = 0xFFD0D0D0.toInt()
             buttonTextColor = 0x4D1A1A1A.toInt()
             onboardingBgColor = 0xF2D0D0D0.toInt()
             glowAlpha = 0.5f
@@ -472,9 +464,7 @@ class MainActivity : AppCompatActivity() {
         // Floating glow orbs — sync palette with theme
         binding.glowParticles.setDarkMode(isDarkMode)
 
-        // Status bar & nav bar
-        window.statusBarColor = statusBarColor
-        window.navigationBarColor = statusBarColor
+        // System bar icon contrast (bars themselves are transparent via edge-to-edge)
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
         insetsController.isAppearanceLightStatusBars = !isDarkMode
         insetsController.isAppearanceLightNavigationBars = !isDarkMode

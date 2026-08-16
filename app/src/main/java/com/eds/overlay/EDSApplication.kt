@@ -4,11 +4,10 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Build
 import com.eds.overlay.data.EdsDatabase
 import com.eds.overlay.data.EdsRepository
-import java.util.Locale
+import com.eds.overlay.util.LocaleHelper
 
 class EDSApplication : Application() {
 
@@ -21,24 +20,8 @@ class EDSApplication : Application() {
     }
 
     override fun attachBaseContext(base: Context) {
-        val prefs = base.getSharedPreferences("muavin_prefs", Context.MODE_PRIVATE)
-        
-        // Eğer kullanıcı henüz dil seçmediyse, sistem dilini kontrol et ve kaydet
-        if (!prefs.contains("app_lang")) {
-            val systemLang = Locale.getDefault().language
-            val initialLang = if (systemLang == "tr") "tr" else "en"
-            prefs.edit().putString("app_lang", initialLang).apply()
-        }
-        
-        val lang = prefs.getString("app_lang", "tr") ?: "tr"
-        val locale = Locale.forLanguageTag(lang)
-        Locale.setDefault(locale)
-        val config = Configuration(base.resources.configuration)
-        config.setLocale(locale)
-        super.attachBaseContext(base.createConfigurationContext(config))
+        super.attachBaseContext(LocaleHelper.wrapContext(base))
     }
-
-    // Locale is re-applied via attachBaseContext on Activity/Service creation.
 
     override fun onCreate() {
         super.onCreate()

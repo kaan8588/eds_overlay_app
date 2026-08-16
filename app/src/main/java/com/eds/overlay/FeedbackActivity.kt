@@ -1,10 +1,8 @@
 package com.eds.overlay
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -18,8 +16,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.updatePadding
 import com.eds.overlay.databinding.ActivityFeedbackBinding
+import com.eds.overlay.util.LocaleHelper
 import com.google.android.gms.location.LocationServices
-import java.util.*
 
 /**
  * Feedback screen that lets users report radar data issues.
@@ -36,8 +34,7 @@ import java.util.*
 class FeedbackActivity : AppCompatActivity() {
 
     companion object {
-        private const val PREFS_NAME = "muavin_prefs"
-        private const val KEY_LANG = "app_lang"
+        private const val PREFS_NAME = LocaleHelper.PREFS_NAME
         private const val KEY_DARK_MODE = "dark_mode"
         private const val FEEDBACK_EMAIL = "tufanisli8@gmail.com"
     }
@@ -59,16 +56,6 @@ class FeedbackActivity : AppCompatActivity() {
             binding.switchSendLocation.isChecked = false
             Toast.makeText(this, getString(R.string.feedback_location_denied), Toast.LENGTH_SHORT).show()
         }
-    }
-
-    override fun attachBaseContext(newBase: Context) {
-        val prefs = newBase.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val lang = prefs.getString(KEY_LANG, "tr") ?: "tr"
-        val locale = Locale.forLanguageTag(lang)
-        Locale.setDefault(locale)
-        val config = Configuration(newBase.resources.configuration)
-        config.setLocale(locale)
-        super.attachBaseContext(newBase.createConfigurationContext(config))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,6 +125,10 @@ class FeedbackActivity : AppCompatActivity() {
      * immediately without location data.
      */
     private fun prepareFeedback() {
+        // Guard against double taps while the location lookup is in flight —
+        // re-enabled by sendFeedbackEmail() if no email app handles the intent.
+        binding.btnSendFeedback.isEnabled = false
+
         if (binding.switchSendLocation.isChecked && hasLocationPermission()) {
             val client = LocationServices.getFusedLocationProviderClient(this)
             try {
@@ -219,12 +210,17 @@ class FeedbackActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(emailIntent, getString(R.string.feedback_choose_app)))
             showSuccess()
         } catch (e: Exception) {
+            binding.btnSendFeedback.isEnabled = true
             Toast.makeText(this, getString(R.string.feedback_no_email_app), Toast.LENGTH_LONG).show()
         }
     }
 
     private fun showSuccess() {
-        binding.btnSendFeedback.animate().alpha(0f).setDuration(300).start()
+        // A view faded to alpha 0 still receives touches, so take it out of
+        // the layout once the fade completes.
+        binding.btnSendFeedback.animate().alpha(0f).setDuration(300).withEndAction {
+            binding.btnSendFeedback.visibility = View.GONE
+        }.start()
         binding.layoutSuccess.visibility = View.VISIBLE
         binding.layoutSuccess.alpha = 0f
         binding.layoutSuccess.translationY = 20f
@@ -241,7 +237,6 @@ class FeedbackActivity : AppCompatActivity() {
         val dimTextColor: Int
         val fadedTextColor: Int
         val ultraFadedTextColor: Int
-        val statusBarColor: Int
 
         if (isDarkMode) {
             primaryTextColor = 0xFFFFFFFF.toInt()
@@ -249,14 +244,12 @@ class FeedbackActivity : AppCompatActivity() {
             dimTextColor = 0x80FFFFFF.toInt()
             fadedTextColor = 0x60FFFFFF.toInt()
             ultraFadedTextColor = 0x30FFFFFF.toInt()
-            statusBarColor = 0xFF161616.toInt()
         } else {
             primaryTextColor = 0xFF1A1A1A.toInt()
             secondaryTextColor = 0xB01A1A1A.toInt()
             dimTextColor = 0x801A1A1A.toInt()
             fadedTextColor = 0x601A1A1A.toInt()
             ultraFadedTextColor = 0x301A1A1A.toInt()
-            statusBarColor = 0xFFD0D0D0.toInt()
         }
 
         binding.feedbackRoot.setBackgroundResource(
@@ -265,8 +258,7 @@ class FeedbackActivity : AppCompatActivity() {
 
         binding.glowParticlesFeedback.setDarkMode(isDarkMode)
 
-        window.statusBarColor = statusBarColor
-        window.navigationBarColor = statusBarColor
+        // System bar icon contrast (bars themselves are transparent via edge-to-edge)
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
         insetsController.isAppearanceLightStatusBars = !isDarkMode
         insetsController.isAppearanceLightNavigationBars = !isDarkMode

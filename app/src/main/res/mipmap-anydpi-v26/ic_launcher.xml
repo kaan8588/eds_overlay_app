@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@color/safe_green" />
+    <background android:drawable="@color/accent_green" />
     <foreground>
         <inset android:inset="25%">
             <vector

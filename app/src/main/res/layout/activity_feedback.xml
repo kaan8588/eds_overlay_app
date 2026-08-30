@@ -4,15 +4,10 @@
     android:id="@+id/feedback_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_main_dark">
+    android:background="@drawable/bg_main">
 
     <com.eds.overlay.ui.GlowParticlesView
         android:id="@+id/glow_particles_feedback"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <View
-        android:id="@+id/scanline_overlay_feedback"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -30,21 +25,24 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:paddingHorizontal="36dp"
+            android:paddingHorizontal="24dp"
             android:paddingTop="16dp"
             android:paddingBottom="24dp">
 
-            <!-- Back Button — direct, no wrapper -->
+            <!-- Back Button -->
             <Button
                 android:id="@+id/btn_back"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="start"
+                android:minHeight="@dimen/touch_target_min"
                 android:gravity="center_vertical|start"
-                android:minWidth="48dp"
+                android:drawableStart="@drawable/ic_arrow_back"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/text_primary"
                 android:text="@string/feedback_back"
-                android:textColor="#80FFFFFF"
+                android:textColor="@color/text_primary"
                 android:textSize="14sp" />
 
             <!-- Title -->
@@ -52,10 +50,10 @@
                 android:id="@+id/tv_feedback_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:text="@string/feedback_title"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/text_primary"
                 android:textSize="22sp"
                 android:textStyle="bold" />
 
@@ -66,7 +64,7 @@
                 android:layout_marginTop="6dp"
                 android:gravity="center"
                 android:text="@string/feedback_subtitle"
-                android:textColor="#60FFFFFF"
+                android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
 
             <!-- Location Toggle Card -->
@@ -78,7 +76,7 @@
                 android:gravity="center_vertical"
                 android:minHeight="56dp"
                 android:orientation="horizontal"
-                android:padding="14dp">
+                android:padding="16dp">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -92,7 +90,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/feedback_send_location"
-                        android:textColor="#B0FFFFFF"
+                        android:textColor="@color/text_primary"
                         android:textSize="13sp"
                         android:textStyle="bold" />
 
@@ -102,149 +100,68 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="@string/feedback_send_location_desc"
-                        android:textColor="#50FFFFFF"
-                        android:textSize="10sp" />
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
                 </LinearLayout>
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_send_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minWidth="48dp"
-                    android:minHeight="48dp"
+                    android:minWidth="@dimen/touch_target_min"
+                    android:minHeight="@dimen/touch_target_min"
                     android:checked="false"
-                    app:thumbTint="#26BC51"
+                    app:thumbTint="@color/switch_thumb_color"
                     app:trackTint="@color/switch_track_color" />
             </LinearLayout>
 
-            <!-- Quick Issue Selection -->
-            <TextView
-                android:id="@+id/tv_quick_issues_label"
+            <!-- Quick Issue Selector (Trigger Row) -->
+            <LinearLayout
+                android:id="@+id/layout_quick_issues_trigger"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:letterSpacing="0.05"
-                android:text="@string/feedback_quick_issues"
-                android:textAllCaps="true"
-                android:textColor="#60FFFFFF"
-                android:textSize="11sp" />
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_feedback_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:minHeight="56dp"
+                android:orientation="horizontal"
+                android:padding="16dp">
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group_issues"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:chipSpacingVertical="4dp"
-                app:singleSelection="false">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_wrong_radar"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/feedback_wrong_radar"
-                    android:textColor="#B0FFFFFF"
-                    android:textSize="11sp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    app:chipBackgroundColor="@color/chip_feedback_bg"
-                    app:chipStrokeColor="#25FFFFFF"
-                    app:chipStrokeWidth="1dp"
-                    app:chipCornerRadius="12dp"
-                    app:chipMinHeight="36dp"
-                    app:checkedIconEnabled="true"
-                    app:checkedIconTint="#26BC51" />
+                    android:layout_weight="1"
+                    android:layout_marginEnd="12dp"
+                    android:orientation="vertical">
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_wrong_location"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feedback_wrong_location"
-                    android:textColor="#B0FFFFFF"
-                    android:textSize="11sp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    app:chipBackgroundColor="@color/chip_feedback_bg"
-                    app:chipStrokeColor="#25FFFFFF"
-                    app:chipStrokeWidth="1dp"
-                    app:chipCornerRadius="12dp"
-                    app:chipMinHeight="36dp"
-                    app:checkedIconEnabled="true"
-                    app:checkedIconTint="#26BC51" />
+                    <TextView
+                        android:id="@+id/tv_quick_issues_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feedback_quick_issues"
+                        android:textColor="@color/text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_wrong_speed"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feedback_wrong_speed"
-                    android:textColor="#B0FFFFFF"
-                    android:textSize="11sp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    app:chipBackgroundColor="@color/chip_feedback_bg"
-                    app:chipStrokeColor="#25FFFFFF"
-                    app:chipStrokeWidth="1dp"
-                    app:chipCornerRadius="12dp"
-                    app:chipMinHeight="36dp"
-                    app:checkedIconEnabled="true"
-                    app:checkedIconTint="#26BC51" />
+                    <TextView
+                        android:id="@+id/tv_quick_issues_summary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/feedback_no_issue_selected"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_missing_radar"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feedback_missing_radar"
-                    android:textColor="#B0FFFFFF"
-                    android:textSize="11sp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    app:chipBackgroundColor="@color/chip_feedback_bg"
-                    app:chipStrokeColor="#25FFFFFF"
-                    app:chipStrokeWidth="1dp"
-                    app:chipCornerRadius="12dp"
-                    app:chipMinHeight="36dp"
-                    app:checkedIconEnabled="true"
-                    app:checkedIconTint="#26BC51" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_wrong_limit"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feedback_wrong_limit"
-                    android:textColor="#B0FFFFFF"
-                    android:textSize="11sp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    app:chipBackgroundColor="@color/chip_feedback_bg"
-                    app:chipStrokeColor="#25FFFFFF"
-                    app:chipStrokeWidth="1dp"
-                    app:chipCornerRadius="12dp"
-                    app:chipMinHeight="36dp"
-                    app:checkedIconEnabled="true"
-                    app:checkedIconTint="#26BC51" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_app_crash"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feedback_app_crash"
-                    android:textColor="#B0FFFFFF"
-                    android:textSize="11sp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    app:chipBackgroundColor="@color/chip_feedback_bg"
-                    app:chipStrokeColor="#25FFFFFF"
-                    app:chipStrokeWidth="1dp"
-                    app:chipCornerRadius="12dp"
-                    app:chipMinHeight="36dp"
-                    app:checkedIconEnabled="true"
-                    app:checkedIconTint="#26BC51" />
-            </com.google.android.material.chip.ChipGroup>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_chevron_down"
+                    app:tint="@color/text_secondary"
+                    android:contentDescription="@string/feedback_select_issues" />
+            </LinearLayout>
 
             <!-- Message Box -->
             <TextView
@@ -255,7 +172,7 @@
                 android:letterSpacing="0.05"
                 android:text="@string/feedback_message_label"
                 android:textAllCaps="true"
-                android:textColor="#60FFFFFF"
+                android:textColor="@color/text_secondary"
                 android:textSize="11sp" />
 
             <EditText
@@ -270,22 +187,22 @@
                 android:maxLines="6"
                 android:minHeight="100dp"
                 android:padding="14dp"
-                android:textColor="#DDFFFFFF"
-                android:textColorHint="#35FFFFFF"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_disabled"
                 android:textSize="14sp" />
 
             <!-- Send Button -->
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_send_feedback"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="52dp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/bg_button_green_glass"
-                android:minHeight="48dp"
+                android:minHeight="@dimen/touch_target_min"
                 android:padding="0dp"
                 android:stateListAnimator="@animator/btn_press_animator"
                 android:text="@string/feedback_send"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/text_on_accent"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:backgroundTint="@null" />
@@ -302,13 +219,20 @@
                 android:padding="16dp"
                 android:visibility="gone">
 
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_check"
+                    android:contentDescription="@null" />
+
                 <TextView
                     android:id="@+id/tv_success_msg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:gravity="center"
                     android:text="@string/feedback_success"
-                    android:textColor="#4CAF50"
+                    android:textColor="@color/accent_green"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
@@ -316,11 +240,11 @@
                     android:id="@+id/btn_go_back"
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
-                    android:layout_height="48dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:minWidth="48dp"
+                    android:minHeight="@dimen/touch_target_min"
                     android:text="@string/feedback_go_back"
-                    android:textColor="#80FFFFFF"
+                    android:textColor="@color/text_primary"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -333,8 +257,8 @@
                 android:gravity="center"
                 android:lineSpacingExtra="3dp"
                 android:text="@string/feedback_privacy_notice"
-                android:textColor="#30FFFFFF"
-                android:textSize="10sp" />
+                android:textColor="@color/text_disabled"
+                android:textSize="11sp" />
 
             <!-- Bottom spacer for nav bar clearance -->
             <View

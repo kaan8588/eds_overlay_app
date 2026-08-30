@@ -3,6 +3,7 @@ package com.eds.overlay
 import android.Manifest
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.net.Uri
 import android.content.pm.PackageManager
 import android.os.Build
@@ -11,6 +12,7 @@ import android.provider.Settings
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -51,8 +53,6 @@ class MainActivity : AppCompatActivity() {
 
     // Cached resources to avoid repeated lookups
     private var cachedQuotes: Array<String>? = null
-    private var scanlineDarkDrawable: android.graphics.drawable.BitmapDrawable? = null
-    private var scanlineLightDrawable: android.graphics.drawable.BitmapDrawable? = null
 
     private val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
         val allGranted = permissions.entries.all { it.value }
@@ -116,7 +116,9 @@ class MainActivity : AppCompatActivity() {
         LocaleHelper.syncWithStoredLanguage(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
+        binding.mainRoot.alpha = 0f
         setContentView(binding.root)
+        binding.mainRoot.animate().alpha(1f).setDuration(400).start()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.mainRoot) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -143,8 +145,9 @@ class MainActivity : AppCompatActivity() {
         // Sync the pref so it stays accurate for next restart
         prefs.edit().putBoolean(KEY_SERVICE_RUNNING, isServiceRunning).apply()
 
-        // Load theme preference and apply
-        isDarkMode = prefs.getBoolean(KEY_DARK_MODE, false)
+        // Sync dark mode state directly with current active configuration
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        isDarkMode = currentNightMode == Configuration.UI_MODE_NIGHT_YES
         isSoundEnabled = prefs.getBoolean(KEY_SOUND_ENABLED, true)
         applyThemeColors()
 
@@ -331,26 +334,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateUI() {
-        val btnBg = if (isServiceRunning) {
-            if (isDarkMode) R.drawable.bg_button_red_glass_dark else R.drawable.bg_button_red_glass
-        } else {
-            if (isDarkMode) R.drawable.bg_button_green_glass_dark else R.drawable.bg_button_green_glass
-        }
+        val btnBg = if (isServiceRunning) R.drawable.bg_button_red_glass else R.drawable.bg_button_green_glass
         
         if (isServiceRunning) {
             binding.tvServiceStatus.text = getString(R.string.status_active)
-            binding.tvServiceStatus.setTextColor(
-                if (isDarkMode) 0xFF4CAF50.toInt() else 0xFF388E3C.toInt()
-            )
+            binding.tvServiceStatus.setTextColor(getColor(R.color.accent_green))
             binding.btnToggle.text = getString(R.string.stop_service)
         } else {
             binding.tvServiceStatus.text = getString(R.string.status_inactive)
-            binding.tvServiceStatus.setTextColor(0xFFFF5252.toInt())
+            binding.tvServiceStatus.setTextColor(getColor(R.color.accent_red))
             binding.btnToggle.text = getString(R.string.start_service)
         }
         binding.btnToggle.setBackgroundResource(btnBg)
         binding.btnToggle.backgroundTintList = null
-        binding.btnToggle.setTextColor(0xFFFFFFFF.toInt())
+        binding.btnToggle.setTextColor(getColor(R.color.text_on_accent))
     }
 
     private fun autoImportOnFirstLaunch() {
@@ -389,18 +386,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Toggles between Turkish and English. AppCompat persists the choice and
-     * re-creates this activity itself, so no manual restart is needed — the
-     * service is bounced separately because it holds its own locale context.
+     * Toggles between Turkish and English with a 400ms fade transition.
+     * Screen fades to black, switches language, then fades back in.
      */
     private fun switchLanguage() {
-        val newLang = LocaleHelper.oppositeLanguage(LocaleHelper.storedLanguage(this))
-        LocaleHelper.setLanguage(this, newLang)
+        binding.btnLanguage.isEnabled = false
+        binding.mainRoot.animate().alpha(0f).setDuration(400).withEndAction {
+            val newLang = LocaleHelper.oppositeLanguage(LocaleHelper.storedLanguage(this))
+            LocaleHelper.setLanguage(this, newLang)
 
-        if (isServiceRunning) {
-            OverlayService.stop(this)
-            OverlayService.start(this)
-        }
+            if (isServiceRunning) {
+                OverlayService.stop(this)
+                OverlayService.start(this)
+            }
+            binding.mainRoot.animate().alpha(1f).setDuration(400).withEndAction {
+                binding.btnLanguage.isEnabled = true
+            }.start()
+        }.start()
     }
 
     private fun toggleSound() {
@@ -414,52 +416,27 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.sound_on) else getString(R.string.sound_off)
     }
 
+    /**
+     * Toggles dark/light mode with a 400ms fade transition.
+     * Screen fades to black, switches theme, then fades back in.
+     */
     private fun toggleTheme() {
-        isDarkMode = !isDarkMode
-        prefs.edit().putBoolean(KEY_DARK_MODE, isDarkMode).apply()
-
-        // Smooth crossfade transition
-        binding.mainRoot.animate().alpha(0f).setDuration(200).withEndAction {
+        binding.btnTheme.isEnabled = false
+        binding.mainRoot.animate().alpha(0f).setDuration(400).withEndAction {
+            isDarkMode = !isDarkMode
+            prefs.edit().putBoolean(KEY_DARK_MODE, isDarkMode).apply()
+            AppCompatDelegate.setDefaultNightMode(
+                if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+            )
             applyThemeColors()
-            binding.mainRoot.animate().alpha(1f).setDuration(300).start()
+            binding.mainRoot.animate().alpha(1f).setDuration(400).withEndAction {
+                binding.btnTheme.isEnabled = true
+            }.start()
         }.start()
     }
 
-
-
     private fun applyThemeColors() {
-        // ── Color palette ───────────────────────────────────────────
-        val primaryTextColor: Int
-        val secondaryTextColor: Int
-        val dimTextColor: Int
-        val fadedTextColor: Int
-        val ultraFadedTextColor: Int
-        val buttonTextColor: Int
-        val onboardingBgColor: Int
-        val glowAlpha: Float
-
-        if (isDarkMode) {
-            primaryTextColor = 0xFFFFFFFF.toInt()
-            secondaryTextColor = 0xB0FFFFFF.toInt()
-            dimTextColor = 0x80FFFFFF.toInt()
-            fadedTextColor = 0x4DFFFFFF.toInt()
-            ultraFadedTextColor = 0x20FFFFFF.toInt()
-            buttonTextColor = 0x4DFFFFFF.toInt()
-            onboardingBgColor = 0xF2121212.toInt()
-            glowAlpha = 0.8f
-        } else {
-            primaryTextColor = 0xFF1A1A1A.toInt()
-            secondaryTextColor = 0xB01A1A1A.toInt()
-            dimTextColor = 0x801A1A1A.toInt()
-            fadedTextColor = 0x4D1A1A1A.toInt()
-            ultraFadedTextColor = 0x201A1A1A.toInt()
-            buttonTextColor = 0x4D1A1A1A.toInt()
-            onboardingBgColor = 0xF2D0D0D0.toInt()
-            glowAlpha = 0.5f
-        }
-
-        // ── Apply to views ──────────────────────────────────────────
-        binding.mainRoot.setBackgroundResource(if (isDarkMode) R.drawable.bg_main_dark else R.drawable.bg_main_light)
+        binding.mainRoot.setBackgroundResource(R.drawable.bg_main)
 
         // Floating glow orbs — sync palette with theme
         binding.glowParticles.setDarkMode(isDarkMode)
@@ -469,70 +446,15 @@ class MainActivity : AppCompatActivity() {
         insetsController.isAppearanceLightStatusBars = !isDarkMode
         insetsController.isAppearanceLightNavigationBars = !isDarkMode
 
-        // Quote text
-        binding.tvQuote.setTextColor(fadedTextColor)
-
-        // Top buttons
-        binding.btnTheme.setTextColor(buttonTextColor)
-        binding.btnLanguage.setTextColor(buttonTextColor)
-
         // Theme button label — show opposite mode name
         binding.btnTheme.text = if (isDarkMode)
             getString(R.string.theme_light) else getString(R.string.theme_dark)
 
         // Logo glow intensity
-        binding.ivLogoGlow.alpha = glowAlpha
-
-        // Logo filter is set once in onCreate — no per-theme change needed
-
-        // Info text & import button
-        binding.tvInfoText.setTextColor(fadedTextColor)
-        binding.btnImport.setTextColor(ultraFadedTextColor)
-        binding.tvPointCount.setTextColor(if (isDarkMode) 0x15FFFFFF.toInt() else 0x151A1A1A.toInt())
-
-        // Feedback button — matches info text style
-        binding.btnFeedback.setTextColor(fadedTextColor)
-
-        // Status card label
-        binding.tvStatusLabel.setTextColor(dimTextColor)
-
-        // Settings row
-        binding.btnSound.setTextColor(buttonTextColor)
-
-        // Onboarding colors
-        binding.layoutOnboarding.setBackgroundColor(onboardingBgColor)
-        binding.tvObTitle.setTextColor(primaryTextColor)
-        binding.tvObMsg.setTextColor(secondaryTextColor)
-        if (!isDarkMode) {
-            binding.btnObNext.setTextColor(0xFFFFFFFF.toInt())
-            binding.btnObNext.backgroundTintList = ColorStateList.valueOf(0xFF2E7D32.toInt())
-        } else {
-            binding.btnObNext.setTextColor(0xFF121212.toInt())
-            binding.btnObNext.backgroundTintList = ColorStateList.valueOf(0xFFFFFFFF.toInt())
-        }
-
-        // Scanline effect — cached to avoid bitmap leak on repeated theme toggles
-        val scanline = if (isDarkMode) {
-            scanlineDarkDrawable ?: buildScanlineDrawable(0x17000000).also { scanlineDarkDrawable = it }
-        } else {
-            scanlineLightDrawable ?: buildScanlineDrawable(0x11000000).also { scanlineLightDrawable = it }
-        }
-        binding.scanlineOverlay.background = scanline
-        binding.mainRoot.foreground = null
+        binding.ivLogoGlow.alpha = if (isDarkMode) 0.8f else 0.5f
 
         // Re-apply service status colors (they depend on theme)
         updateUI()
-    }
-
-    private fun buildScanlineDrawable(lineColor: Int): android.graphics.drawable.BitmapDrawable {
-        val bmp = android.graphics.Bitmap.createBitmap(1, 4, android.graphics.Bitmap.Config.ARGB_8888)
-        bmp.setPixel(0, 0, 0x00000000)
-        bmp.setPixel(0, 1, 0x00000000)
-        bmp.setPixel(0, 2, lineColor)
-        bmp.setPixel(0, 3, lineColor)
-        return android.graphics.drawable.BitmapDrawable(resources, bmp).apply {
-            setTileModeXY(android.graphics.Shader.TileMode.REPEAT, android.graphics.Shader.TileMode.REPEAT)
-        }
     }
 
 }

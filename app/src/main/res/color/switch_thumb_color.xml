@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Switch track color: vivid green when checked, neutral outline when unchecked -->
+<!-- Switch thumb color: active green when checked, muted disabled gray when unchecked -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:color="@color/accent_green" android:state_checked="true" />
-    <item android:color="@color/outline" />
+    <item android:color="@color/text_disabled" />
 </selector>

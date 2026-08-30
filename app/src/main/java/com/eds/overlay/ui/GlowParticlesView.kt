@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import com.eds.overlay.location.LiveSpeed
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
@@ -48,16 +49,28 @@ class GlowParticlesView @JvmOverloads constructor(
         const val ORB_COUNT = 5          // reduced from 10
         const val BITMAP_SIZE = 128
         const val FRAME_INTERVAL_MS = 50L // ~20 fps — silky enough for ambient glow
+        // Speed → motion, linear: 0 km/h → 0.9×, 40 → 2×, 120 → 4.2×.
+        const val SCALE_MIN = 0.9f
+        const val SCALE_MAX = 4.2f
+        const val SCALE_REF_KMH = 120f
+        const val SPEED_SMOOTH = 0.08f
     }
 
     private var coreColor = Color.parseColor("#4CAF50")
 
     // ── Timer-based animation (no Choreographer overhead) ──────────
     private var isAnimating = false
+    /** Smoothed motion multiplier. 1f = parked ambient speed. */
+    private var speedScale = 1f
+
     private val animRunnable = object : Runnable {
         override fun run() {
             if (!isAnimating) return
-            tick = (tick + 1f) % TICK_WRAP
+            // One volatile read + lerp. Frame rate stays 20 fps — only
+            // per-orb travel distance changes, so GPU cost is unchanged.
+            val target = speedToScale(LiveSpeed.kmh)
+            speedScale += (target - speedScale) * SPEED_SMOOTH
+            tick = (tick + speedScale) % TICK_WRAP
             updateOrbs()
             invalidate()
             postDelayed(this, FRAME_INTERVAL_MS)
@@ -146,8 +159,8 @@ class GlowParticlesView @JvmOverloads constructor(
         if (w == 0f || h == 0f) return
 
         for (orb in orbs) {
-            orb.x += cos(orb.driftAngle) * orb.driftSpeed / w
-            orb.y += sin(orb.driftAngle) * orb.driftSpeed / h
+            orb.x += cos(orb.driftAngle) * orb.driftSpeed * speedScale / w
+            orb.y += sin(orb.driftAngle) * orb.driftSpeed * speedScale / h
             orb.driftAngle += (Random.nextFloat() - 0.5f) * 0.06f
 
             val margin = 0.25f
@@ -157,6 +170,14 @@ class GlowParticlesView @JvmOverloads constructor(
             if (orb.y > 1f + margin) orb.y -= 1f + 2 * margin
         }
     }
+
+    /**
+     * Maps vehicle speed to an orb motion multiplier.
+     * 0 km/h → [SCALE_MIN], [SCALE_REF_KMH] → ~2×, then clamped.
+     */
+    private fun speedToScale(kmh: Float): Float =
+        (SCALE_MIN + kmh * ((SCALE_MAX - SCALE_MIN) / SCALE_REF_KMH))
+            .coerceIn(SCALE_MIN, SCALE_MAX)
 
     // ── Drawing (zero allocation) ─────────────────────────────────
     private val srcRect = Rect(0, 0, BITMAP_SIZE, BITMAP_SIZE)

@@ -79,10 +79,14 @@
     <string name="feedback_button">Geri Bildirim</string>
     <string name="feedback_title">Geri Bildirim</string>
     <string name="feedback_subtitle">Radar verilerinin eksik veya hatalı olma ihtimaline karşı bize bildirin.</string>
-    <string name="feedback_back">← Geri</string>
+    <string name="feedback_back">Geri</string>
     <string name="feedback_send_location">Bulunduğum Konumu Gönder</string>
     <string name="feedback_send_location_desc">İsteğe bağlı. Açarsanız, yalnızca bu geri bildirim için anlık konumunuz e-postaya eklenir.</string>
     <string name="feedback_quick_issues">Hızlı İletişim Seçenekleri</string>
+    <string name="feedback_select_issues">Sorunları Seçin</string>
+    <string name="feedback_issues_selected">%d sorun seçildi</string>
+    <string name="feedback_no_issue_selected">Seçim yapılmadı</string>
+    <string name="feedback_done">Tamam</string>
     <string name="feedback_wrong_radar">Bulunduğum konumdaki radar verisi yanlış</string>
     <string name="feedback_wrong_location">Konum verim yanlış</string>
     <string name="feedback_wrong_speed">Uygulama hızımı yanlış gösteriyor</string>
@@ -92,7 +96,7 @@
     <string name="feedback_message_label">Mesajınız</string>
     <string name="feedback_message_hint">Sorunu detaylı bir şekilde açıklayın…</string>
     <string name="feedback_send">Gönder</string>
-    <string name="feedback_success">✓ Mesajınız başarıyla iletildi</string>
+    <string name="feedback_success">Mesajınız başarıyla iletildi</string>
     <string name="feedback_go_back">Ana Sayfaya Dön</string>
     <string name="feedback_choose_app">E-posta uygulaması seçin</string>
     <string name="feedback_no_email_app">E-posta uygulaması bulunamadı</string>

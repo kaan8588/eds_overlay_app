@@ -79,10 +79,14 @@
     <string name="feedback_button">Feedback</string>
     <string name="feedback_title">Feedback</string>
     <string name="feedback_subtitle">Let us know if radar data is missing or incorrect.</string>
-    <string name="feedback_back">← Back</string>
+    <string name="feedback_back">Back</string>
     <string name="feedback_send_location">Send My Location</string>
     <string name="feedback_send_location_desc">Optional. If enabled, your current location is added to the email for this feedback only.</string>
     <string name="feedback_quick_issues">Quick Issue Options</string>
+    <string name="feedback_select_issues">Select Issues</string>
+    <string name="feedback_issues_selected">%d issues selected</string>
+    <string name="feedback_no_issue_selected">None selected</string>
+    <string name="feedback_done">Done</string>
     <string name="feedback_wrong_radar">Radar data at my location is wrong</string>
     <string name="feedback_wrong_location">My location data is wrong</string>
     <string name="feedback_wrong_speed">App shows wrong speed</string>
@@ -92,7 +96,7 @@
     <string name="feedback_message_label">Your Message</string>
     <string name="feedback_message_hint">Describe the issue in detail…</string>
     <string name="feedback_send">Send</string>
-    <string name="feedback_success">✓ Your message has been sent successfully</string>
+    <string name="feedback_success">Your message has been sent successfully</string>
     <string name="feedback_go_back">Return to Home</string>
     <string name="feedback_choose_app">Choose an email app</string>
     <string name="feedback_no_email_app">No email app found</string>

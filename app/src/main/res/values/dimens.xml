@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Design system dimensional tokens.
+    Defines unified radii and spacing across the app.
+-->
+<resources>
+    <!-- Corner Radii -->
+    <dimen name="radius_surface">12dp</dimen>
+    <dimen name="radius_input">8dp</dimen>
+    <dimen name="radius_pill">999dp</dimen>
+
+    <!-- Accessibility Touch Targets -->
+    <dimen name="touch_target_min">48dp</dimen>
+
+    <!-- Spacing -->
+    <dimen name="space_xs">4dp</dimen>
+    <dimen name="space_sm">8dp</dimen>
+    <dimen name="space_md">16dp</dimen>
+    <dimen name="space_lg">24dp</dimen>
+    <dimen name="space_xl">32dp</dimen>
+</resources>

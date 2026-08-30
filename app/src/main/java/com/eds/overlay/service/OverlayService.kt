@@ -22,6 +22,7 @@ import com.eds.overlay.algorithm.SpatialEngine
 import com.eds.overlay.algorithm.Threat
 import com.eds.overlay.data.EdsRepository
 import com.eds.overlay.location.DrivingDetector
+import com.eds.overlay.location.LiveSpeed
 import com.eds.overlay.location.LocationEngine
 import com.eds.overlay.ui.OverlayView
 import com.eds.overlay.util.LocaleHelper
@@ -121,6 +122,7 @@ class OverlayService : Service(), LocationEngine.LocationListener,
 
     override fun onDestroy() {
         isRunning = false
+        LiveSpeed.kmh = 0f
         locationEngine.stopTracking()
         drivingDetector.stopMonitoring()
         removeOverlay()
@@ -155,6 +157,7 @@ class OverlayService : Service(), LocationEngine.LocationListener,
                 //    speed to stick at 0 after brief GPS dropouts)
                 val speedKmh = if (!accuracyOk || rawSpeedKmh < SPEED_NOISE_THRESHOLD_KMH)
                     0.0 else rawSpeedKmh
+                LiveSpeed.kmh = speedKmh.toFloat()
 
                 val (currentSpeed, threats) = withContext(Dispatchers.Default) {
                     val candidates = repository.getNearbyPoints(lat, lng, QUERY_RADIUS_KM)
@@ -188,6 +191,7 @@ class OverlayService : Service(), LocationEngine.LocationListener,
         } else {
             locationEngine.stopTracking()
             overlayView?.hide()
+            LiveSpeed.kmh = 0f
         }
     }
 

@@ -34,6 +34,33 @@ class EdsRepository(private val dao: EdsDao) {
 
         /** Singleton Gson instance — avoids reflection-heavy re-init per call */
         private val gson = Gson()
+
+        private val OBFUSCATION_KEY = byteArrayOf(
+            0x4D, 0x75, 0x61, 0x76, 0x69, 0x6E, 0x45, 0x44, 0x53, 0x32, 0x30, 0x32, 0x36
+        )
+
+        /**
+         * Decodes raw asset bytes to string.
+         * Transparently supports plain JSON UTF-8 or XOR-obfuscated payloads.
+         */
+        fun decodeAssetPayload(bytes: ByteArray): String {
+            if (bytes.isEmpty()) return "[]"
+            var firstByte: Byte = 0
+            for (b in bytes) {
+                if (b != 0x20.toByte() && b != 0x09.toByte() && b != 0x0A.toByte() && b != 0x0D.toByte()) {
+                    firstByte = b
+                    break
+                }
+            }
+            if (firstByte == 0x5B.toByte() || firstByte == 0x7B.toByte()) {
+                return String(bytes, Charsets.UTF_8)
+            }
+            val decoded = ByteArray(bytes.size)
+            for (i in bytes.indices) {
+                decoded[i] = (bytes[i].toInt() xor OBFUSCATION_KEY[i % OBFUSCATION_KEY.size].toInt()).toByte()
+            }
+            return String(decoded, Charsets.UTF_8)
+        }
     }
 
     // L1 Cache: In-memory store to avoid repeated DB hits for the same location
@@ -55,9 +82,8 @@ class EdsRepository(private val dao: EdsDao) {
     suspend fun importFromAssets(context: Context): Int = importMutex.withLock {
         withContext(Dispatchers.IO) {
             try {
-                val json = context.assets.open("eds_data.json")
-                    .bufferedReader()
-                    .use { it.readText() }
+                val rawBytes = context.assets.open("eds_data.json").use { it.readBytes() }
+                val json = decodeAssetPayload(rawBytes)
 
                 val type = object : TypeToken<List<RawEdsEntry>>() {}.type
                 val rawEntries: List<RawEdsEntry> = gson.fromJson(json, type)

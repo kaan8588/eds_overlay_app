@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import androidx.appcompat.app.AppCompatDelegate
 import com.eds.overlay.data.EdsDatabase
 import com.eds.overlay.data.EdsRepository
 import com.eds.overlay.util.LocaleHelper
@@ -25,6 +26,15 @@ class EDSApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        
+        // Initialize night mode according to persisted preference before any UI inflates
+        val prefs = getSharedPreferences(LocaleHelper.PREFS_NAME, Context.MODE_PRIVATE)
+        val isDarkMode = prefs.getBoolean("dark_mode", false)
+        AppCompatDelegate.setDefaultNightMode(
+            if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
+        )
+
         createNotificationChannel()
     }
 

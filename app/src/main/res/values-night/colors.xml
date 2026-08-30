@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Design system color tokens (Light theme).
-    Paired with res/values-night/colors.xml for dark mode.
+    Design system color tokens (Dark theme).
+    Paired with res/values/colors.xml for light mode.
 -->
 <resources>
     <!-- Surfaces -->
-    <color name="surface">#FFF8F9FA</color>
-    <color name="surface_variant">#FFEAECEF</color>
-    <color name="surface_raised">#FFFFFFFF</color>
-    <color name="outline">#FFD0D7DE</color>
+    <color name="surface">#FF121212</color>
+    <color name="surface_variant">#FF1E1E1E</color>
+    <color name="surface_raised">#FF282828</color>
+    <color name="outline">#FF383838</color>
 
     <!-- Typography -->
-    <color name="text_primary">#FF1A1A1A</color>
-    <color name="text_secondary">#FF5E6C84</color>
-    <color name="text_disabled">#FF9AA5B1</color>
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_secondary">#B3FFFFFF</color>
+    <color name="text_disabled">#4DFFFFFF</color>
     <color name="text_on_accent">#FFFFFFFF</color>
 
     <!-- Brand / Status -->
-    <color name="accent_green">#FF2E7D32</color>
-    <color name="accent_red">#FFD32F2F</color>
-    <color name="warning_amber">#FFF57F17</color>
+    <color name="accent_green">#FF4CAF50</color>
+    <color name="accent_red">#FFEF5350</color>
+    <color name="warning_amber">#FFFFB74D</color>
 
     <!-- Overlay widget specific (fixed high-contrast on any backdrop) -->
     <color name="overlay_safe_bg">#FF1B5E20</color>

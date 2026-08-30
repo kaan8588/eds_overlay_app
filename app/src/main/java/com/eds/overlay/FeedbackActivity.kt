@@ -3,6 +3,7 @@ package com.eds.overlay
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -16,11 +17,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.updatePadding
 import com.eds.overlay.databinding.ActivityFeedbackBinding
+import com.eds.overlay.ui.QuickIssuesSheet
 import com.eds.overlay.util.LocaleHelper
 import com.google.android.gms.location.LocationServices
 
 /**
- * Feedback screen that lets users report radar data issues.
+ * Feedback screen that lets users report radar data issues and app feedback.
  *
  * Privacy design:
  * - No INTERNET permission — emails are sent via the user's own email app
@@ -41,10 +43,20 @@ class FeedbackActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityFeedbackBinding
     private var isDarkMode = true
-    private var scanlineDarkDrawable: android.graphics.drawable.BitmapDrawable? = null
-    private var scanlineLightDrawable: android.graphics.drawable.BitmapDrawable? = null
 
     private val prefs by lazy { getSharedPreferences(PREFS_NAME, MODE_PRIVATE) }
+    private val selectedIssueIndices = mutableSetOf<Int>()
+
+    private val quickIssueStrings by lazy {
+        listOf(
+            getString(R.string.feedback_wrong_radar),
+            getString(R.string.feedback_wrong_location),
+            getString(R.string.feedback_wrong_speed),
+            getString(R.string.feedback_missing_radar),
+            getString(R.string.feedback_wrong_limit),
+            getString(R.string.feedback_app_crash)
+        )
+    }
 
     // Permission launcher for the location toggle — only triggered when the
     // user explicitly turns the switch ON.
@@ -84,9 +96,11 @@ class FeedbackActivity : AppCompatActivity() {
             insets
         }
 
-        isDarkMode = prefs.getBoolean(KEY_DARK_MODE, false)
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        isDarkMode = currentNightMode == Configuration.UI_MODE_NIGHT_YES
         applyThemeColors()
         setupListeners()
+        updateQuickIssuesSummary()
 
         // Auto-scroll to EditText when it receives focus (keyboard opens)
         binding.etMessage.setOnFocusChangeListener { view, hasFocus ->
@@ -102,6 +116,15 @@ class FeedbackActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener { finish() }
         binding.btnGoBack.setOnClickListener { finish() }
 
+        // Open BottomSheet dialog for selecting issue types
+        binding.layoutQuickIssuesTrigger.setOnClickListener {
+            QuickIssuesSheet.newInstance(quickIssueStrings, selectedIssueIndices) { confirmed ->
+                selectedIssueIndices.clear()
+                selectedIssueIndices.addAll(confirmed)
+                updateQuickIssuesSummary()
+            }.show(supportFragmentManager, QuickIssuesSheet.TAG)
+        }
+
         // Only request location permission when the user actively turns
         // the toggle ON — never proactively.
         binding.switchSendLocation.setOnCheckedChangeListener { _, isChecked ->
@@ -111,6 +134,14 @@ class FeedbackActivity : AppCompatActivity() {
         }
 
         binding.btnSendFeedback.setOnClickListener { prepareFeedback() }
+    }
+
+    private fun updateQuickIssuesSummary() {
+        binding.tvQuickIssuesSummary.text = if (selectedIssueIndices.isEmpty()) {
+            getString(R.string.feedback_no_issue_selected)
+        } else {
+            getString(R.string.feedback_issues_selected, selectedIssueIndices.size)
+        }
     }
 
     private fun hasLocationPermission(): Boolean {
@@ -153,15 +184,7 @@ class FeedbackActivity : AppCompatActivity() {
     }
 
     private fun sendFeedbackEmail(locationString: String?) {
-        val issues = mutableListOf<String>()
-
-        if (binding.chipWrongRadar.isChecked) issues.add(getString(R.string.feedback_wrong_radar))
-        if (binding.chipWrongLocation.isChecked) issues.add(getString(R.string.feedback_wrong_location))
-        if (binding.chipWrongSpeed.isChecked) issues.add(getString(R.string.feedback_wrong_speed))
-        if (binding.chipMissingRadar.isChecked) issues.add(getString(R.string.feedback_missing_radar))
-        if (binding.chipWrongLimit.isChecked) issues.add(getString(R.string.feedback_wrong_limit))
-        if (binding.chipAppCrash.isChecked) issues.add(getString(R.string.feedback_app_crash))
-
+        val issues = selectedIssueIndices.map { quickIssueStrings[it] }
         val message = binding.etMessage.text.toString().trim()
 
         // Build email body — uses string resources so it respects the active locale
@@ -232,29 +255,7 @@ class FeedbackActivity : AppCompatActivity() {
     }
 
     private fun applyThemeColors() {
-        val primaryTextColor: Int
-        val secondaryTextColor: Int
-        val dimTextColor: Int
-        val fadedTextColor: Int
-        val ultraFadedTextColor: Int
-
-        if (isDarkMode) {
-            primaryTextColor = 0xFFFFFFFF.toInt()
-            secondaryTextColor = 0xB0FFFFFF.toInt()
-            dimTextColor = 0x80FFFFFF.toInt()
-            fadedTextColor = 0x60FFFFFF.toInt()
-            ultraFadedTextColor = 0x30FFFFFF.toInt()
-        } else {
-            primaryTextColor = 0xFF1A1A1A.toInt()
-            secondaryTextColor = 0xB01A1A1A.toInt()
-            dimTextColor = 0x801A1A1A.toInt()
-            fadedTextColor = 0x601A1A1A.toInt()
-            ultraFadedTextColor = 0x301A1A1A.toInt()
-        }
-
-        binding.feedbackRoot.setBackgroundResource(
-            if (isDarkMode) R.drawable.bg_main_dark else R.drawable.bg_main_light
-        )
+        binding.feedbackRoot.setBackgroundResource(R.drawable.bg_main)
 
         binding.glowParticlesFeedback.setDarkMode(isDarkMode)
 
@@ -262,45 +263,5 @@ class FeedbackActivity : AppCompatActivity() {
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
         insetsController.isAppearanceLightStatusBars = !isDarkMode
         insetsController.isAppearanceLightNavigationBars = !isDarkMode
-
-        binding.tvFeedbackTitle.setTextColor(primaryTextColor)
-        binding.tvFeedbackSubtitle.setTextColor(fadedTextColor)
-        binding.btnBack.setTextColor(dimTextColor)
-        binding.tvLocationToggleLabel.setTextColor(secondaryTextColor)
-        binding.tvLocationToggleDesc.setTextColor(fadedTextColor)
-        binding.tvQuickIssuesLabel.setTextColor(fadedTextColor)
-        binding.tvMessageLabel.setTextColor(fadedTextColor)
-        binding.tvPrivacyNotice.setTextColor(ultraFadedTextColor)
-
-        binding.etMessage.setTextColor(if (isDarkMode) 0xDDFFFFFF.toInt() else 0xDD1A1A1A.toInt())
-        binding.etMessage.setHintTextColor(if (isDarkMode) 0x35FFFFFF.toInt() else 0x351A1A1A.toInt())
-
-        // Send button — dark/light glass reflection
-        binding.btnSendFeedback.setBackgroundResource(
-            if (isDarkMode) R.drawable.bg_button_green_glass_dark else R.drawable.bg_button_green_glass
-        )
-        binding.btnSendFeedback.backgroundTintList = null
-
-        // Scanline effect — cached to avoid bitmap leak on repeated theme toggles
-        val scanline = if (isDarkMode) {
-            scanlineDarkDrawable ?: buildScanlineDrawable(0x17000000).also { scanlineDarkDrawable = it }
-        } else {
-            scanlineLightDrawable ?: buildScanlineDrawable(0x11000000).also { scanlineLightDrawable = it }
-        }
-        binding.scanlineOverlayFeedback.background = scanline
-    }
-
-    private fun buildScanlineDrawable(lineColor: Int): android.graphics.drawable.BitmapDrawable {
-        val bmp = android.graphics.Bitmap.createBitmap(1, 4, android.graphics.Bitmap.Config.ARGB_8888)
-        bmp.setPixel(0, 0, 0x00000000)
-        bmp.setPixel(0, 1, 0x00000000)
-        bmp.setPixel(0, 2, lineColor)
-        bmp.setPixel(0, 3, lineColor)
-        return android.graphics.drawable.BitmapDrawable(resources, bmp).apply {
-            setTileModeXY(
-                android.graphics.Shader.TileMode.REPEAT,
-                android.graphics.Shader.TileMode.REPEAT
-            )
-        }
     }
 }

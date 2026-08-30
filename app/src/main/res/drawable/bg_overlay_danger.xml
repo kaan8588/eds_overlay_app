@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Overlay danger status card (opaque with defined border) -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="#DDB71C1C" />
-    <corners android:radius="16dp" />
-    <stroke android:width="2dp" android:color="#AAFF1744" />
+    <solid android:color="@color/overlay_danger_bg" />
+    <corners android:radius="@dimen/radius_surface" />
+    <stroke
+        android:width="2dp"
+        android:color="@color/overlay_danger_stroke" />
 </shape>

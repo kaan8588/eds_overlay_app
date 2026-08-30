@@ -1,9 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.EDSOverlay" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="colorPrimary">#FF4CAF50</item>
-        <item name="colorOnPrimary">#FFFFFFFF</item>
-        <item name="colorSurface">#FF121212</item>
-        <item name="colorOnSurface">#FFFFFFFF</item>
+    <style name="Theme.EDSOverlay" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/accent_green</item>
+        <item name="colorOnPrimary">@color/text_on_accent</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+
+        <item name="android:fontFamily">@font/lexend</item>
+        <item name="fontFamily">@font/lexend</item>
+        <item name="android:textViewStyle">@style/Widget.EDS.TextView</item>
+        <item name="android:buttonStyle">@style/Widget.EDS.Button</item>
+        <item name="buttonStyle">@style/Widget.EDS.Button</item>
+        <item name="borderlessButtonStyle">@style/Widget.EDS.Button.Borderless</item>
+
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.EDS.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.EDS.DisplayMedium</item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.EDS.DisplaySmall</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.EDS.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.EDS.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.EDS.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.EDS.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.EDS.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.EDS.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.EDS.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.EDS.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.EDS.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.EDS.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.EDS.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.EDS.LabelSmall</item>
     </style>
 </resources>

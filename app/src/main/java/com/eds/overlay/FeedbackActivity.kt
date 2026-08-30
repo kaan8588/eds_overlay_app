@@ -239,26 +239,11 @@ class FeedbackActivity : AppCompatActivity() {
     }
 
     private fun showSuccess() {
-        // A view faded to alpha 0 still receives touches, so take it out of
-        // the layout once the fade completes.
-        binding.btnSendFeedback.animate().alpha(0f).setDuration(300).withEndAction {
-            binding.btnSendFeedback.visibility = View.GONE
-        }.start()
+        binding.btnSendFeedback.visibility = View.GONE
         binding.layoutSuccess.visibility = View.VISIBLE
-        binding.layoutSuccess.alpha = 0f
-        binding.layoutSuccess.translationY = 20f
-        binding.layoutSuccess.animate()
-            .alpha(1f)
-            .translationY(0f)
-            .setDuration(500)
-            .start()
     }
 
     private fun applyThemeColors() {
-        binding.feedbackRoot.setBackgroundResource(R.drawable.bg_main)
-
-        binding.glowParticlesFeedback.setDarkMode(isDarkMode)
-
         // System bar icon contrast (bars themselves are transparent via edge-to-edge)
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
         insetsController.isAppearanceLightStatusBars = !isDarkMode

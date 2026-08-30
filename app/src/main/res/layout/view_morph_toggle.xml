@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Internal layout for MorphToggleButton.
+    Contains a background circular blob and dual text views for the slide-in morph animation.
+-->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="FrameLayout">
+
+    <!-- Morphing circular blob that expands on press -->
+    <View
+        android:id="@+id/view_morph_blob"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginStart="24dp"
+        android:background="@drawable/bg_morph_blob"
+        android:visibility="invisible" />
+
+    <!-- Idle state text -->
+    <TextView
+        android:id="@+id/tv_morph_idle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/inter"
+        android:letterSpacing="0.05"
+        android:textColor="@color/text_primary"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="@string/start_service" />
+
+    <!-- Pressed state container (text + arrow) -->
+    <LinearLayout
+        android:id="@+id/layout_morph_pressed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:alpha="0"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:translationX="32dp">
+
+        <TextView
+            android:id="@+id/tv_morph_pressed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter"
+            android:letterSpacing="0.05"
+            android:textColor="@color/text_on_accent"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="@string/start_service" />
+
+        <ImageView
+            android:id="@+id/iv_morph_arrow"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="8dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_arrow_right" />
+    </LinearLayout>
+
+</merge>

@@ -96,7 +96,7 @@
     <string name="feedback_message_label">Mesajınız</string>
     <string name="feedback_message_hint">Sorunu detaylı bir şekilde açıklayın…</string>
     <string name="feedback_send">Gönder</string>
-    <string name="feedback_success">Mesajınız başarıyla iletildi</string>
+    <string name="feedback_success">E-posta uygulamanıza yönlendiriliyorsunuz…</string>
     <string name="feedback_go_back">Ana Sayfaya Dön</string>
     <string name="feedback_choose_app">E-posta uygulaması seçin</string>
     <string name="feedback_no_email_app">E-posta uygulaması bulunamadı</string>

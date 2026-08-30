@@ -2,7 +2,6 @@ package com.eds.overlay
 
 import android.Manifest
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.net.Uri
 import android.content.pm.PackageManager
@@ -116,9 +115,7 @@ class MainActivity : AppCompatActivity() {
         LocaleHelper.syncWithStoredLanguage(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        binding.mainRoot.alpha = 0f
         setContentView(binding.root)
-        binding.mainRoot.animate().alpha(1f).setDuration(400).start()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.mainRoot) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -159,7 +156,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        binding.btnToggle.setOnClickListener { toggleService() }
+        binding.btnToggle.setOnToggleRequest { toggleService() }
         binding.btnImport.setOnClickListener { importData() }
         binding.btnLanguage.setOnClickListener { switchLanguage() }
         binding.btnTheme.setOnClickListener { toggleTheme() }
@@ -179,16 +176,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startTransitiveOnboarding() {
-        binding.layoutMainContent.alpha = 0.3f
         binding.layoutOnboarding.visibility = android.view.View.VISIBLE
-        binding.layoutOnboarding.alpha = 0f
-        binding.layoutOnboarding.translationY = 100f
-
-        binding.layoutOnboarding.animate()
-            .alpha(1f)
-            .translationY(0f)
-            .setDuration(800)
-            .start()
 
         updateOnboardingUI()
 
@@ -230,28 +218,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun animateTransition(action: () -> Unit) {
-        binding.tvObTitle.animate().alpha(0f).translationX(-50f).setDuration(300).start()
-        binding.tvObMsg.animate().alpha(0f).translationX(-50f).setDuration(350).withEndAction {
-            action()
-            binding.tvObTitle.translationX = 50f
-            binding.tvObMsg.translationX = 50f
-            binding.tvObTitle.animate().alpha(1f).translationX(0f).setDuration(300).start()
-            binding.tvObMsg.animate().alpha(1f).translationX(0f).setDuration(350).start()
-        }.start()
+        action()
     }
 
     private fun finishOnboarding() {
-        binding.layoutOnboarding.animate()
-            .alpha(0f)
-            .translationY(-100f)
-            .setDuration(600)
-            .withEndAction {
-                binding.layoutOnboarding.visibility = android.view.View.GONE
-                binding.layoutMainContent.animate().alpha(1f).setDuration(500).start()
-                prefs.edit().putBoolean(KEY_FIRST_LAUNCH, false).apply()
-                autoImportOnFirstLaunch()
-            }
-            .start()
+        binding.layoutOnboarding.visibility = android.view.View.GONE
+        binding.layoutMainContent.alpha = 1f
+        prefs.edit().putBoolean(KEY_FIRST_LAUNCH, false).apply()
+        autoImportOnFirstLaunch()
     }
 
     /**
@@ -303,10 +277,7 @@ class MainActivity : AppCompatActivity() {
             val quotes = cachedQuotes ?: resources.getStringArray(R.array.muavin_quotes).also { cachedQuotes = it }
             while (isActive) {
                 val randomQuote = quotes.random()
-                binding.tvQuote.animate().alpha(0f).setDuration(500).withEndAction {
-                    binding.tvQuote.text = randomQuote
-                    binding.tvQuote.animate().alpha(1f).setDuration(500).start()
-                }.start()
+                binding.tvQuote.text = randomQuote
                 delay(QUOTE_DELAY)
             }
         }
@@ -334,20 +305,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateUI() {
-        val btnBg = if (isServiceRunning) R.drawable.bg_button_red_glass else R.drawable.bg_button_green_glass
-        
         if (isServiceRunning) {
             binding.tvServiceStatus.text = getString(R.string.status_active)
             binding.tvServiceStatus.setTextColor(getColor(R.color.accent_green))
-            binding.btnToggle.text = getString(R.string.stop_service)
         } else {
             binding.tvServiceStatus.text = getString(R.string.status_inactive)
             binding.tvServiceStatus.setTextColor(getColor(R.color.accent_red))
-            binding.btnToggle.text = getString(R.string.start_service)
         }
-        binding.btnToggle.setBackgroundResource(btnBg)
-        binding.btnToggle.backgroundTintList = null
-        binding.btnToggle.setTextColor(getColor(R.color.text_on_accent))
+        binding.btnToggle.setRunning(isServiceRunning)
     }
 
     private fun autoImportOnFirstLaunch() {
@@ -386,23 +351,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Toggles between Turkish and English with a 400ms fade transition.
-     * Screen fades to black, switches language, then fades back in.
+     * Toggles between Turkish and English.
      */
     private fun switchLanguage() {
-        binding.btnLanguage.isEnabled = false
-        binding.mainRoot.animate().alpha(0f).setDuration(400).withEndAction {
-            val newLang = LocaleHelper.oppositeLanguage(LocaleHelper.storedLanguage(this))
-            LocaleHelper.setLanguage(this, newLang)
+        val newLang = LocaleHelper.oppositeLanguage(LocaleHelper.storedLanguage(this))
+        LocaleHelper.setLanguage(this, newLang)
 
-            if (isServiceRunning) {
-                OverlayService.stop(this)
-                OverlayService.start(this)
-            }
-            binding.mainRoot.animate().alpha(1f).setDuration(400).withEndAction {
-                binding.btnLanguage.isEnabled = true
-            }.start()
-        }.start()
+        if (isServiceRunning) {
+            OverlayService.stop(this)
+            OverlayService.start(this)
+        }
     }
 
     private fun toggleSound() {
@@ -417,30 +375,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Toggles dark/light mode with a 400ms fade transition.
-     * Screen fades to black, switches theme, then fades back in.
+     * Toggles dark/light mode.
      */
     private fun toggleTheme() {
-        binding.btnTheme.isEnabled = false
-        binding.mainRoot.animate().alpha(0f).setDuration(400).withEndAction {
-            isDarkMode = !isDarkMode
-            prefs.edit().putBoolean(KEY_DARK_MODE, isDarkMode).apply()
-            AppCompatDelegate.setDefaultNightMode(
-                if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-            )
-            applyThemeColors()
-            binding.mainRoot.animate().alpha(1f).setDuration(400).withEndAction {
-                binding.btnTheme.isEnabled = true
-            }.start()
-        }.start()
+        isDarkMode = !isDarkMode
+        prefs.edit().putBoolean(KEY_DARK_MODE, isDarkMode).apply()
+        AppCompatDelegate.setDefaultNightMode(
+            if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        )
+        applyThemeColors()
     }
 
     private fun applyThemeColors() {
-        binding.mainRoot.setBackgroundResource(R.drawable.bg_main)
-
-        // Floating glow orbs — sync palette with theme
-        binding.glowParticles.setDarkMode(isDarkMode)
-
         // System bar icon contrast (bars themselves are transparent via edge-to-edge)
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
         insetsController.isAppearanceLightStatusBars = !isDarkMode
@@ -449,9 +395,6 @@ class MainActivity : AppCompatActivity() {
         // Theme button label — show opposite mode name
         binding.btnTheme.text = if (isDarkMode)
             getString(R.string.theme_light) else getString(R.string.theme_dark)
-
-        // Logo glow intensity
-        binding.ivLogoGlow.alpha = if (isDarkMode) 0.8f else 0.5f
 
         // Re-apply service status colors (they depend on theme)
         updateUI()

@@ -43,13 +43,6 @@ object SpatialEngine {
      */
     private const val CAMERA_CONE_HALF_DEG = 60.0
 
-    /**
-     * Minimum speed (km/h) at which GPS bearing is considered reliable.
-     * Below this, directional filtering is skipped entirely — a stationary
-     * or crawling user gets distance-only results.
-     */
-    private const val MIN_SPEED_FOR_BEARING_KMH = 15.0
-
     // ── Distance ────────────────────────────────────────────────────
 
     /**
@@ -172,11 +165,11 @@ object SpatialEngine {
         val cosUserLat = cos(rUserLat)
         val sinUserLat = sin(rUserLat)
 
-        // Directional filtering requires a trustworthy heading: the user must
-        // be moving fast enough for GPS bearing to stabilize AND the fix must
-        // actually carry a bearing (negative = sentinel for "no bearing").
-        val useDirectionalFilter =
-            userSpeedKmh >= MIN_SPEED_FOR_BEARING_KMH && userBearing >= 0.0
+        // Directional filtering requires a heading from the GPS fix.
+        // Speed is not used as a gate: crawling in traffic with a valid
+        // bearing must still ignore cameras behind / beside the vehicle.
+        // Negative userBearing is the sentinel for "fix has no bearing".
+        val useDirectionalFilter = userBearing >= 0.0
 
         return candidates
             .mapNotNull { point ->
@@ -200,8 +193,7 @@ object SpatialEngine {
                 val bearingToTarget = (atan2(x, y) * (180.0 / PI) + 360) % 360
 
                 // ── Directional filtering ───────────────────────────────
-                // Skipped entirely when the heading is unreliable (slow speed
-                // or missing bearing) — distance-only results in that case.
+                // Skipped entirely when the GPS fix carries no bearing.
                 if (useDirectionalFilter) {
                     val relativeAngleToTarget = bearingDifference(userBearing, bearingToTarget)
 

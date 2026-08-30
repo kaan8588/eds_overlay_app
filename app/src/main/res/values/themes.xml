@@ -6,8 +6,10 @@
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/text_primary</item>
 
-        <item name="android:fontFamily">@font/lexend</item>
-        <item name="fontFamily">@font/lexend</item>
+        <item name="android:windowBackground">@color/surface</item>
+
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="fontFamily">@font/inter</item>
         <item name="android:textViewStyle">@style/Widget.EDS.TextView</item>
         <item name="android:buttonStyle">@style/Widget.EDS.Button</item>
         <item name="buttonStyle">@style/Widget.EDS.Button</item>

@@ -3,13 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg_main">
+    android:layout_height="match_parent">
 
-    <com.eds.overlay.ui.GlowParticlesView
-        android:id="@+id/glow_particles"
+    <ImageView
+        android:id="@+id/iv_bg_photo"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:src="@drawable/bg_photo"
+        android:scaleType="centerCrop"
+        android:importantForAccessibility="no" />
 
     <ScrollView
         android:id="@+id/scroll_view_main"
@@ -30,19 +32,7 @@
                 android:id="@+id/fl_logo_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"
-                android:clipChildren="false"
-                android:clipToPadding="false">
-
-                <ImageView
-                    android:id="@+id/iv_logo_glow"
-                    android:layout_width="165dp"
-                    android:layout_height="165dp"
-                    android:layout_gravity="center"
-                    android:alpha="0.8"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/bg_glow_green"
-                    android:contentDescription="@null" />
+                android:layout_marginTop="60dp">
 
                 <ImageView
                     android:id="@+id/iv_logo_main"
@@ -60,7 +50,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
                 android:layout_marginBottom="@dimen/space_md"
-                android:fontFamily="@font/lexend"
                 android:textFontWeight="500"
                 android:gravity="center"
                 android:paddingHorizontal="20dp"
@@ -68,49 +57,32 @@
                 android:textColor="@color/text_secondary"
                 android:textSize="15sp" />
 
-            <LinearLayout
-                android:id="@+id/layout_status_card"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_status_label"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_md"
-                android:background="@drawable/bg_card"
-                android:orientation="vertical"
-                android:padding="20dp">
+                android:letterSpacing="0.1"
+                android:text="@string/status"
+                android:textAllCaps="true"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
 
-                <TextView
-                    android:id="@+id/tv_status_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:letterSpacing="0.1"
-                    android:text="@string/status"
-                    android:textAllCaps="true"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+            <TextView
+                android:id="@+id/tv_service_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                android:text="@string/status_inactive"
+                android:textColor="@color/accent_red"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tv_service_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_xs"
-                    android:text="@string/status_inactive"
-                    android:textColor="@color/accent_red"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <androidx.appcompat.widget.AppCompatButton
+            <com.eds.overlay.ui.MorphToggleButton
                 android:id="@+id/btn_toggle"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_marginTop="@dimen/space_lg"
-                android:background="@drawable/bg_button_green_glass"
-                android:padding="0dp"
-                android:stateListAnimator="@animator/btn_press_animator"
-                android:text="@string/start_service"
-                android:textColor="@color/text_on_accent"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:backgroundTint="@null" />
+                android:layout_marginTop="@dimen/space_lg" />
 
             <!-- Settings Row: Sound toggle -->
             <Button
@@ -146,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_sm"
                 android:minHeight="@dimen/touch_target_min"
-                android:background="@drawable/bg_button_feedback_glass"
+                android:background="@drawable/bg_button_secondary"
                 android:letterSpacing="0.05"
                 android:paddingHorizontal="@dimen/space_md"
                 android:paddingVertical="@dimen/space_sm"

@@ -22,7 +22,6 @@ import com.eds.overlay.algorithm.SpatialEngine
 import com.eds.overlay.algorithm.Threat
 import com.eds.overlay.data.EdsRepository
 import com.eds.overlay.location.DrivingDetector
-import com.eds.overlay.location.LiveSpeed
 import com.eds.overlay.location.LocationEngine
 import com.eds.overlay.ui.OverlayView
 import com.eds.overlay.util.LocaleHelper
@@ -83,6 +82,8 @@ class OverlayService : Service(), LocationEngine.LocationListener,
     private val alertCooldownMs = 10_000L
     // Tracks which radar point was last alerted so DİKKAT fires only once per radar
     private var lastAlertedPointId: Long = -1L
+    // Last spoken severity for that point; WARNING→DANGER must speak again
+    private var lastAlertedLevel: Threat.Level? = null
 
     private var computationJob: Job? = null
 
@@ -122,7 +123,6 @@ class OverlayService : Service(), LocationEngine.LocationListener,
 
     override fun onDestroy() {
         isRunning = false
-        LiveSpeed.kmh = 0f
         locationEngine.stopTracking()
         drivingDetector.stopMonitoring()
         removeOverlay()
@@ -157,7 +157,6 @@ class OverlayService : Service(), LocationEngine.LocationListener,
                 //    speed to stick at 0 after brief GPS dropouts)
                 val speedKmh = if (!accuracyOk || rawSpeedKmh < SPEED_NOISE_THRESHOLD_KMH)
                     0.0 else rawSpeedKmh
-                LiveSpeed.kmh = speedKmh.toFloat()
 
                 val (currentSpeed, threats) = withContext(Dispatchers.Default) {
                     val candidates = repository.getNearbyPoints(lat, lng, QUERY_RADIUS_KM)
@@ -191,7 +190,6 @@ class OverlayService : Service(), LocationEngine.LocationListener,
         } else {
             locationEngine.stopTracking()
             overlayView?.hide()
-            LiveSpeed.kmh = 0f
         }
     }
 
@@ -246,11 +244,12 @@ class OverlayService : Service(), LocationEngine.LocationListener,
         if (nearest == null) {
             // No threat → reset per-point tracking so re-entry triggers a fresh alert
             lastAlertedPointId = -1L
+            lastAlertedLevel = null
             return
         }
         // Alert on WARNING (approaching) and DANGER (speeding)
         if (nearest.level == Threat.Level.SAFE) return
-        // Only alert within 500m — beyond that, visual feedback (blink) is enough
+        // Only speak within 500m — farther cameras stay visual-only on the HUD
         if (nearest.distanceM >= 500) return
 
         // Sound toggle: respect user preference
@@ -258,25 +257,30 @@ class OverlayService : Service(), LocationEngine.LocationListener,
             .getBoolean(KEY_SOUND_ENABLED, true)
         if (!soundEnabled) return
 
-        // One-shot per radar point: don't repeat for the same camera
-        if (nearest.point.id == lastAlertedPointId) return
+        val isSamePoint = nearest.point.id == lastAlertedPointId
+        val isEscalation = isSamePoint &&
+            lastAlertedLevel != Threat.Level.DANGER &&
+            nearest.level == Threat.Level.DANGER
+        // One-shot per radar unless severity rose from WARNING to DANGER
+        if (isSamePoint && !isEscalation) return
 
         val now = System.currentTimeMillis()
-        if (now - lastAlertTime > alertCooldownMs) {
-            lastAlertTime = now
-            lastAlertedPointId = nearest.point.id
-            // Persist so a sticky-service restart doesn't re-alert immediately
-            getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-                .edit().putLong(KEY_LAST_ALERT_TIME, now).apply()
+        // Escalation skips the 10s cooldown so a speed-limit breach after
+        // an approach warning is still spoken.
+        if (!isEscalation && now - lastAlertTime <= alertCooldownMs) return
 
-            val msg = if (nearest.level == Threat.Level.DANGER) {
-                getString(R.string.tts_alert_danger, nearest.point.speedLimit)
-            } else {
-                // WARNING level — approaching radar, not yet speeding
-                buildWarningMessage(nearest)
-            }
-            speak(msg)
+        lastAlertTime = now
+        lastAlertedPointId = nearest.point.id
+        lastAlertedLevel = nearest.level
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+            .edit().putLong(KEY_LAST_ALERT_TIME, now).apply()
+
+        val msg = if (nearest.level == Threat.Level.DANGER) {
+            getString(R.string.tts_alert_danger, nearest.point.speedLimit)
+        } else {
+            buildWarningMessage(nearest)
         }
+        speak(msg)
     }
 
     /**

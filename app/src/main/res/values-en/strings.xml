@@ -96,7 +96,7 @@
     <string name="feedback_message_label">Your Message</string>
     <string name="feedback_message_hint">Describe the issue in detail…</string>
     <string name="feedback_send">Send</string>
-    <string name="feedback_success">Your message has been sent successfully</string>
+    <string name="feedback_success">Redirecting to your email app…</string>
     <string name="feedback_go_back">Return to Home</string>
     <string name="feedback_choose_app">Choose an email app</string>
     <string name="feedback_no_email_app">No email app found</string>

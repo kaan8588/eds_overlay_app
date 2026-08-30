@@ -204,9 +204,8 @@ class SpatialEngineTest {
     }
 
     @Test
-    fun `findThreats - stationary user gets distance-only results`() {
-        // Below 15 km/h the GPS bearing is unreliable → directional
-        // filtering must be skipped and even a camera "behind" is reported.
+    fun `findThreats - slow user with bearing still filters cameras behind`() {
+        // Valid GPS bearing at crawl speed must still apply the forward cone.
         val cameras = listOf(
             EdsPoint(latitude = 41.0084, longitude = 28.978, direction = 180.0, speedLimit = 50)
         )
@@ -219,7 +218,7 @@ class SpatialEngineTest {
             radiusM = 1000.0
         )
 
-        assertEquals("Stationary user should still see nearby radar", 1, threats.size)
+        assertTrue("Camera behind a slow user with bearing should be filtered", threats.isEmpty())
     }
 
     @Test

@@ -27,7 +27,7 @@
         android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:fontFamily="@font/lexend" />
+        android:fontFamily="@font/inter" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -35,7 +35,7 @@
         android:text="@string/overlay_unit_kmh"
         android:textColor="#B0FFFFFF"
         android:textSize="10sp"
-        android:fontFamily="@font/lexend" />
+        android:fontFamily="@font/inter" />
 
     <!-- Divider -->
     <View
@@ -58,7 +58,7 @@
             android:text="@string/overlay_label_limit"
             android:textColor="#B0FFFFFF"
             android:textSize="11sp"
-            android:fontFamily="@font/lexend" />
+            android:fontFamily="@font/inter" />
 
         <TextView
             android:id="@+id/tv_speed_limit"
@@ -68,7 +68,7 @@
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:fontFamily="@font/lexend" />
+            android:fontFamily="@font/inter" />
     </LinearLayout>
 
     <!-- Distance -->
@@ -86,7 +86,7 @@
             android:text="@string/overlay_label_distance"
             android:textColor="#B0FFFFFF"
             android:textSize="11sp"
-            android:fontFamily="@font/lexend" />
+            android:fontFamily="@font/inter" />
 
         <TextView
             android:id="@+id/tv_distance"
@@ -96,7 +96,7 @@
             android:textColor="#FFFFFF"
             android:textSize="13sp"
             android:textStyle="bold"
-            android:fontFamily="@font/lexend" />
+            android:fontFamily="@font/inter" />
     </LinearLayout>
 
     <!-- Status -->
@@ -109,7 +109,7 @@
         android:textColor="#FFFFFF"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:fontFamily="@font/lexend" />
+        android:fontFamily="@font/inter" />
 
     <!-- Radar Description (shown when approaching) -->
     <TextView
@@ -123,7 +123,7 @@
         android:maxWidth="180dp"
         android:textColor="#B0FFFFFF"
         android:textSize="10sp"
-        android:fontFamily="@font/lexend"
+        android:fontFamily="@font/inter"
         android:visibility="gone" />
 
 </LinearLayout>

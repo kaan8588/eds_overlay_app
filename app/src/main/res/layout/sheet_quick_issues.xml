@@ -67,7 +67,7 @@
         android:layout_height="50dp"
         android:layout_marginHorizontal="@dimen/space_lg"
         android:layout_marginTop="@dimen/space_md"
-        android:background="@drawable/bg_button_green_glass"
+        android:background="@drawable/bg_button_primary"
         android:text="@string/feedback_done"
         android:textColor="@color/text_on_accent"
         android:textSize="15sp"

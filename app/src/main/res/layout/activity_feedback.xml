@@ -3,13 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/feedback_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg_main">
+    android:layout_height="match_parent">
 
-    <com.eds.overlay.ui.GlowParticlesView
-        android:id="@+id/glow_particles_feedback"
+    <ImageView
+        android:id="@+id/iv_bg_photo"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:src="@drawable/bg_photo"
+        android:scaleType="centerCrop"
+        android:importantForAccessibility="no" />
 
     <ScrollView
         android:id="@+id/scroll_view_feedback"
@@ -197,7 +199,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/bg_button_green_glass"
+                android:background="@drawable/bg_button_primary"
                 android:minHeight="@dimen/touch_target_min"
                 android:padding="0dp"
                 android:stateListAnimator="@animator/btn_press_animator"
@@ -219,17 +221,10 @@
                 android:padding="16dp"
                 android:visibility="gone">
 
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/ic_check"
-                    android:contentDescription="@null" />
-
                 <TextView
                     android:id="@+id/tv_success_msg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:gravity="center"
                     android:text="@string/feedback_success"
                     android:textColor="@color/accent_green"

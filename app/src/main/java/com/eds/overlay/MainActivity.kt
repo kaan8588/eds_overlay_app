@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         private const val QUOTE_DELAY = 60_000L // 60 seconds
 
         /** Last onboarding page; tapping the button here requests permissions. */
-        private const val LAST_ONBOARDING_STEP = 4
+        private const val LAST_ONBOARDING_STEP = 5
     }
 
     private lateinit var binding: ActivityMainBinding
@@ -65,6 +66,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             binding.tvObTitle.text = getString(R.string.permission_promise_title)
+            binding.btnObSkip.visibility = View.GONE
 
             if (permanentlyDenied) {
                 // User tapped "Don't ask again" — system won't show dialog anymore.
@@ -176,7 +178,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startTransitiveOnboarding() {
-        binding.layoutOnboarding.visibility = android.view.View.VISIBLE
+        binding.layoutOnboarding.visibility = View.VISIBLE
 
         updateOnboardingUI()
 
@@ -191,6 +193,10 @@ class MainActivity : AppCompatActivity() {
                 requestPermissions()
             }
         }
+        binding.btnObSkip.setOnClickListener {
+            onboardingStep = LAST_ONBOARDING_STEP
+            animateTransition { updateOnboardingUI() }
+        }
     }
 
     private fun updateOnboardingUI() = when (onboardingStep) {
@@ -198,21 +204,31 @@ class MainActivity : AppCompatActivity() {
             binding.tvObTitle.text = getString(R.string.onboarding_title)
             binding.tvObMsg.text = getString(R.string.onboarding_msg)
             binding.btnObNext.text = getString(R.string.onboarding_next)
+            binding.btnObSkip.visibility = View.VISIBLE
         }
         2 -> {
+            binding.tvObTitle.text = getString(R.string.onboarding_hud_title)
+            binding.tvObMsg.text = getString(R.string.onboarding_hud_msg)
+            binding.btnObNext.text = getString(R.string.onboarding_next)
+            binding.btnObSkip.visibility = View.VISIBLE
+        }
+        3 -> {
             binding.tvObTitle.text = getString(R.string.onboarding_orientation_title)
             binding.tvObMsg.text = getString(R.string.onboarding_orientation_msg)
             binding.btnObNext.text = getString(R.string.onboarding_next)
+            binding.btnObSkip.visibility = View.VISIBLE
         }
-        3 -> {
+        4 -> {
             binding.tvObTitle.text = getString(R.string.onboarding_wifi_title)
             binding.tvObMsg.text = getString(R.string.onboarding_wifi_msg)
             binding.btnObNext.text = getString(R.string.onboarding_next)
+            binding.btnObSkip.visibility = View.VISIBLE
         }
-        4 -> {
+        5 -> {
             binding.tvObTitle.text = getString(R.string.permission_promise_title)
             binding.tvObMsg.text = getString(R.string.permission_promise_msg)
             binding.btnObNext.text = getString(R.string.permission_grant)
+            binding.btnObSkip.visibility = View.GONE
         }
         else -> {}
     }
@@ -262,6 +278,7 @@ class MainActivity : AppCompatActivity() {
             binding.tvObTitle.text = getString(R.string.permission_promise_title)
             binding.tvObMsg.text = getString(R.string.permission_background_msg)
             binding.btnObNext.text = getString(R.string.permission_grant)
+            binding.btnObSkip.visibility = View.GONE
             binding.btnObNext.setOnClickListener {
                 backgroundLocationLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
             }

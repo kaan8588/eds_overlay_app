@@ -44,6 +44,9 @@
     <string name="onboarding_title">Hi, I\'m Muavin!</string>
     <string name="onboarding_msg">I track radars along the way and protect you from fines.</string>
     <string name="onboarding_next">Continue</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_hud_title">Radar HUD &amp; Alerts</string>
+    <string name="onboarding_hud_msg">A smart overlay appears on your screen while driving. Green means clear, yellow warns when approaching, and red alerts on speeding. Voice prompts alert you on approach and speed limit breaches.</string>
     <string name="permission_promise_title">A Small Permission</string>
     <string name="permission_promise_msg">I need permissions to see the radars around you. Your data is processed within your phone without leaving it, and Muavin does not share your data with third parties.</string>
     <string name="permission_grant">Got it, Allow</string>

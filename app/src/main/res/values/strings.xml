@@ -44,6 +44,9 @@
     <string name="onboarding_title">Merhaba, Ben Muavin!</string>
     <string name="onboarding_msg">Yol boyunca radarları takip eder, seni cezalardan korurum.</string>
     <string name="onboarding_next">Devam</string>
+    <string name="onboarding_skip">Atla</string>
+    <string name="onboarding_hud_title">Radar Ekranı &amp; Uyarılar</string>
+    <string name="onboarding_hud_msg">Sürüş sırasında ekranda akıllı bir panel yer alır. Yeşil güvenli, sarı yaklaşırken dikkat, kırmızı ise hız aşımı demektir. Ayrıca yaklaşırken ve limit aşıldığında sesli ikaz alırsınız.</string>
     <string name="permission_promise_title">Küçük Bir İzin</string>
     <string name="permission_promise_msg">Etrafınızdaki radarları görmek için izinlere ihtiyacım var. Verileriniz dışarı çıkmadan telefonunuz içerisinde işlenir ve Muavin verilerinizi üçüncü kişilerle paylaşmaz.</string>
     <string name="permission_grant">Anladım, İzin Ver</string>

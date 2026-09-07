@@ -220,6 +220,17 @@
             android:textColor="@color/text_on_accent"
             android:textStyle="bold"
             app:backgroundTint="@color/accent_green" />
+
+        <Button
+            android:id="@+id/btn_ob_skip"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:minHeight="@dimen/touch_target_min"
+            android:text="@string/onboarding_skip"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
     </LinearLayout>
 
 </FrameLayout>
